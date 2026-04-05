@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>St. Catherine FC - Eraviputhenthurai | Since 1953</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'scfc-green': '#1B5E20',
+                        'scfc-dark': '#0D1B0D',
+                        'scfc-light': '#2E7D32',
+                        'scfc-accent': '#4CAF50'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .hero-pattern {
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=1920');
+            background-size: cover;
+            background-position: center;
+        }
+        .fade-in { animation: fadeIn 0.8s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Navigation -->
+    <nav class="bg-scfc-dark border-b border-scfc-green sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <img src="logo.png" alt="SCFC Logo" class="h-14 w-14 object-contain rounded-full border-2 border-scfc-green">
+                    <div>
+                        <h1 class="text-xl font-bold text-white leading-tight">St. Catherine FC</h1>
+                        <p class="text-xs text-scfc-accent">Eraviputhenthurai | Since 1953</p>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="flex items-baseline space-x-1">
+                        <a href="index.html" class="bg-scfc-green text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-scfc-light transition">Home</a>
+                        <a href="about.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">About</a>
+                        <a href="tournament.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Tournament Hub</a>
+                        <a href="gallery.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Gallery</a>
+                        <a href="contact.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Contact</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white p-2">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-scfc-dark border-t border-scfc-green">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="bg-scfc-green text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="about.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="tournament.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">Tournament Hub</a>
+                <a href="gallery.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">Gallery</a>
+                <a href="contact.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-pattern min-h-screen flex items-center justify-center relative" style="padding-top: 70px;">
+        <img src="logo.png" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; height:400px; object-fit:contain; opacity:0.04; filter:grayscale(100%); pointer-events:none; z-index:0;">
+        <div class="text-center px-4 max-w-5xl mx-auto fade-in relative" style="position: relative; z-index: 1;">
+            <div class="mb-6">
+                <span class="bg-scfc-green text-white px-6 py-2 rounded-full text-sm font-semibold tracking-wider uppercase">Since 1953</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+                <span class="text-white">St. Catherine</span><br>
+                <span class="text-scfc-accent">Football Club</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-4">Eraviputhenthurai</p>
+            <p class="text-lg text-gray-400 mb-8 mx-auto whitespace-nowrap">The heartbeat of football in our coastal village for over 70 years. One Team. One Dream.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="tournament.html" class="bg-scfc-green hover:bg-scfc-light text-white font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-trophy mr-2"></i>39th Tournament 2026
+                </a>
+                <a href="about.html" class="bg-transparent border-2 border-scfc-green text-white hover:bg-scfc-green font-bold py-4 px-8 rounded-full text-lg transition">
+                    <i class="fas fa-info-circle mr-2"></i>Our Story
+                </a>
+            </div>
+        </div>
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-3xl text-scfc-accent"></i>
+        </div>
+    </section>
+
+    <!-- Countdown Section -->
+    <section class="py-20 bg-scfc-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="bg-scfc-green text-white px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider">Coming Soon</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mt-4 mb-2">39th All India Tournament</h2>
+            <p class="text-gray-400 mb-8">June 27, 2026</p>
+
+            <!-- Countdown Timer -->
+            <div class="grid grid-cols-4 gap-4 max-w-lg mx-auto mb-12">
+                <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
+                    <div id="countdown-days" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
+                    <div class="text-xs text-gray-400 mt-1">Days</div>
+                </div>
+                <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
+                    <div id="countdown-hours" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
+                    <div class="text-xs text-gray-400 mt-1">Hours</div>
+                </div>
+                <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
+                    <div id="countdown-minutes" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
+                    <div class="text-xs text-gray-400 mt-1">Minutes</div>
+                </div>
+                <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
+                    <div id="countdown-seconds" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
+                    <div class="text-xs text-gray-400 mt-1">Seconds</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="py-20 bg-gray-900">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <i class="fas fa-quote-left text-5xl text-scfc-green/30 mb-6"></i>
+            <blockquote class="text-2xl md:text-3xl font-light text-white italic mb-6">
+                "More than just a club, St. Catherine FC brings together families, fosters young talent, and keeps the spirit of football alive in our fishing community."
+            </blockquote>
+            <p class="text-scfc-accent font-semibold">— St. Catherine Football Club Family</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-scfc-green">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="logo.png" alt="SCFC Logo" class="h-12 w-12 object-contain rounded-full border-2 border-scfc-green">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">St. Catherine FC</h3>
+                            <p class="text-xs text-gray-400">Eraviputhenthurai</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">The heartbeat of football in our coastal village. Proudly serving the community since 1953.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-scfc-accent transition">Home</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-scfc-accent transition">About</a></li>
+                        <li><a href="tournament.html" class="text-gray-400 hover:text-scfc-accent transition">Tournament</a></li>
+                        <li><a href="gallery.html" class="text-gray-400 hover:text-scfc-accent transition">Gallery</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-scfc-accent transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/st.catherine.official?igsh=aDkwdTZyMDY4bW40" target="_blank" class="w-10 h-10 bg-scfc-green/20 rounded-full flex items-center justify-center text-scfc-accent hover:bg-scfc-green hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm text-center md:text-left">Since 1953 | Eraviputhenthurai | One Team. One Dream. ⚽❤️</p>
+                <button onclick="openAdminModal()" class="mt-4 md:mt-0 text-gray-600 hover:text-scfc-accent transition" title="Admin Panel">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+        <div class="bg-gray-900 border border-scfc-green rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold text-white mb-4">Admin Login</h3>
+            <input type="password" id="admin-password" placeholder="Enter password" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white mb-4 focus:border-scfc-green focus:outline-none">
+            <div class="flex gap-4">
+                <button onclick="checkAdminPassword()" class="flex-1 bg-scfc-green hover:bg-scfc-light text-white py-2 rounded-lg font-semibold transition">Login</button>
+                <button onclick="closeAdminModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition">Cancel</button>
+            </div>
+            <p id="admin-error" class="text-red-500 text-sm mt-3 hidden">Incorrect password!</p>
+        </div>
+    </div>
+
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            const tournamentDate = new Date('2026-06-27T09:00:00');
+            const now = new Date();
+            const diff = tournamentDate - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown-days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('countdown-hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('countdown-minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('countdown-seconds').textContent = seconds.toString().padStart(2, '0');
+            } else {
+                document.getElementById('countdown-days').textContent = '00';
+                document.getElementById('countdown-hours').textContent = '00';
+                document.getElementById('countdown-minutes').textContent = '00';
+                document.getElementById('countdown-seconds').textContent = '00';
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Admin Modal
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-modal').classList.add('flex');
+        }
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-modal').classList.remove('flex');
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-error').classList.add('hidden');
+        }
+        function checkAdminPassword() {
+            const password = document.getElementById('admin-password').value;
+            if (password === 'scfc2026') {
+                window.location.href = 'tournament.html#admin';
+            } else {
+                document.getElementById('admin-error').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

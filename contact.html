@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - St. Catherine FC | Eraviputhenthurai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'scfc-green': '#1B5E20',
+                        'scfc-dark': '#0D1B0D',
+                        'scfc-light': '#2E7D32',
+                        'scfc-accent': '#4CAF50'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .fade-in { animation: fadeIn 0.8s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Navigation -->
+    <nav class="bg-scfc-dark border-b border-scfc-green sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <img src="logo.png" alt="SCFC Logo" class="h-14 w-14 object-contain rounded-full border-2 border-scfc-green">
+                    <div>
+                        <h1 class="text-xl font-bold text-white leading-tight">St. Catherine FC</h1>
+                        <p class="text-xs text-scfc-accent">Eraviputhenthurai | Since 1953</p>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="flex items-baseline space-x-1">
+                        <a href="index.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Home</a>
+                        <a href="about.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">About</a>
+                        <a href="tournament.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Tournament Hub</a>
+                        <a href="gallery.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Gallery</a>
+                        <a href="contact.html" class="bg-scfc-green text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-scfc-light transition">Contact</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white p-2">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-scfc-dark border-t border-scfc-green">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="about.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="tournament.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">Tournament Hub</a>
+                <a href="gallery.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">Gallery</a>
+                <a href="contact.html" class="bg-scfc-green text-white block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-b from-scfc-dark to-gray-900 py-20" style="padding-top: 80px;">
+        <div class="max-w-7xl mx-auto px-4 text-center fade-in relative" style="position: relative; z-index: 1;">
+            <img src="logo.png" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; height:400px; object-fit:contain; opacity:0.04; filter:grayscale(100%); pointer-events:none; z-index:0;">
+            <span class="bg-scfc-green text-white px-6 py-2 rounded-full text-sm font-semibold tracking-wider uppercase">Get in Touch</span>
+            <h1 class="text-5xl md:text-6xl font-extrabold mt-6 mb-6">
+                <span class="text-white">Contact</span> <span class="text-scfc-accent">Us</span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto">Have questions or want to get involved? We'd love to hear from you!</p>
+            <div class="w-24 h-1 bg-scfc-green mx-auto mt-8 rounded-full"></div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-16 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="bg-scfc-dark rounded-2xl p-8 border border-scfc-green/30 slide-up">
+                    <h2 class="text-2xl font-bold text-white mb-6">Send us a Message</h2>
+                    <form id="contact-form" class="space-y-6">
+                        <div>
+                            <label class="block text-gray-400 text-sm font-medium mb-2">Your Name</label>
+                            <input type="text" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-scfc-green focus:outline-none transition" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm font-medium mb-2">Email Address</label>
+                            <input type="email" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-scfc-green focus:outline-none transition" placeholder="john@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm font-medium mb-2">Subject</label>
+                            <select class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-scfc-green focus:outline-none transition">
+                                <option>General Inquiry</option>
+                                <option>Media & Press</option>
+                                <option>Sponsorship</option>
+                                <option>Feedback</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm font-medium mb-2">Message</label>
+                            <textarea rows="5" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-scfc-green focus:outline-none transition resize-none" placeholder="Your message..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-scfc-green hover:bg-scfc-light text-white font-bold py-4 rounded-lg transition transform hover:scale-[1.02]">
+                            <i class="fas fa-paper-plane mr-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-8 slide-up" style="animation-delay: 0.2s">
+                    <!-- Contact Cards -->
+                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30 hover:border-scfc-green transition">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-scfc-green/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-xl text-scfc-accent"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">Location</h3>
+                                <p class="text-gray-400">St. Catherine Football Club<br>Eraviputhenthurai<br>Kanyakumari District, Tamil Nadu<br>India</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30 hover:border-scfc-green transition">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-scfc-green/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope text-xl text-scfc-accent"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">Email</h3>
+                                <p class="text-gray-400">info@stcatherinefc.in<br>tournament@stcatherinefc.in</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30 hover:border-scfc-green transition">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-scfc-green/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone text-xl text-scfc-accent"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">Phone</h3>
+                                <p class="text-gray-400">+91 XXXXX XXXXX<br>Mon-Sat, 9:00 AM - 6:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
+                        <h3 class="text-lg font-bold text-white mb-4">Follow Us</h3>
+                        <div class="flex gap-4">
+                            <a href="https://www.instagram.com/st.catherine.official?igsh=aDkwdTZyMDY4bW40" target="_blank" class="w-12 h-12 bg-scfc-green/20 rounded-lg flex items-center justify-center text-scfc-accent hover:bg-scfc-green hover:text-white transition">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-16 bg-scfc-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white mb-4">Find Us</h2>
+                <p class="text-gray-400">Located in the heart of Eraviputhenthurai</p>
+            </div>
+            <iframe
+                src="https://maps.google.com/maps?q=8.0883,77.5385&z=16&output=embed"
+                width="100%" height="260"
+                style="border:1px solid #1f1f1f; display:block;"
+                loading="lazy">
+            </iframe>
+            <a href="https://maps.app.goo.gl/3dQEXvFnKqnR2Vym8"
+                target="_blank"
+                style="color:#22c55e; font-size:0.8rem;
+                display:block; margin-top:8px;">
+                View on Google Maps →
+            </a>
+        </div>
+    </section>
+
+    <!-- Quick Links Section -->
+    <section class="py-16 bg-gray-900">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-6">
+                <a href="tournament.html" class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30 hover:border-scfc-green hover:bg-scfc-green/10 transition text-center group">
+                    <i class="fas fa-trophy text-4xl text-scfc-accent mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold text-white mb-2">Tournament Info</h3>
+                    <p class="text-gray-400 text-sm">Schedule and pool details</p>
+                </a>
+
+                <a href="gallery.html" class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30 hover:border-scfc-green hover:bg-scfc-green/10 transition text-center group">
+                    <i class="fas fa-images text-4xl text-scfc-accent mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold text-white mb-2">Submit Photos</h3>
+                    <p class="text-gray-400 text-sm">Share your tournament memories</p>
+                </a>
+
+                <a href="about.html" class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30 hover:border-scfc-green hover:bg-scfc-green/10 transition text-center group">
+                    <i class="fas fa-users text-4xl text-scfc-accent mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold text-white mb-2">Join the Club</h3>
+                    <p class="text-gray-400 text-sm">Become part of our family</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-scfc-green">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="logo.png" alt="SCFC Logo" class="h-12 w-12 object-contain rounded-full border-2 border-scfc-green">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">St. Catherine FC</h3>
+                            <p class="text-xs text-gray-400">Eraviputhenthurai</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">The heartbeat of football in our coastal village. Proudly serving the community since 1953.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-scfc-accent transition">Home</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-scfc-accent transition">About</a></li>
+                        <li><a href="tournament.html" class="text-gray-400 hover:text-scfc-accent transition">Tournament</a></li>
+                        <li><a href="gallery.html" class="text-gray-400 hover:text-scfc-accent transition">Gallery</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-scfc-accent transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/st.catherine.official?igsh=aDkwdTZyMDY4bW40" target="_blank" class="w-10 h-10 bg-scfc-green/20 rounded-full flex items-center justify-center text-scfc-accent hover:bg-scfc-green hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm text-center md:text-left">Since 1953 | Eraviputhenthurai | One Team. One Dream. ⚽❤️</p>
+                <button onclick="openAdminModal()" class="mt-4 md:mt-0 text-gray-600 hover:text-scfc-accent transition" title="Admin Panel">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+        <div class="bg-gray-900 border border-scfc-green rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold text-white mb-4">Admin Login</h3>
+            <input type="password" id="admin-password" placeholder="Enter password" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white mb-4 focus:border-scfc-green focus:outline-none">
+            <div class="flex gap-4">
+                <button onclick="checkAdminPassword()" class="flex-1 bg-scfc-green hover:bg-scfc-light text-white py-2 rounded-lg font-semibold transition">Login</button>
+                <button onclick="closeAdminModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition">Cancel</button>
+            </div>
+            <p id="admin-error" class="text-red-500 text-sm mt-3 hidden">Incorrect password!</p>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+        <div class="bg-gray-900 border border-scfc-green rounded-xl p-8 max-w-md w-full mx-4 text-center">
+            <i class="fas fa-check-circle text-6xl text-scfc-accent mb-4"></i>
+            <h3 class="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+            <p class="text-gray-400 mb-6">Thank you for reaching out. We'll get back to you soon.</p>
+            <button onclick="closeSuccessModal()" class="bg-scfc-green hover:bg-scfc-light text-white py-3 px-8 rounded-lg font-semibold transition">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Admin Modal
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-modal').classList.add('flex');
+        }
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-modal').classList.remove('flex');
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-error').classList.add('hidden');
+        }
+        function checkAdminPassword() {
+            const password = document.getElementById('admin-password').value;
+            if (password === 'scfc2026') {
+                window.location.href = 'tournament.html#admin';
+            } else {
+                document.getElementById('admin-error').classList.remove('hidden');
+            }
+        }
+
+        // Contact Form
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('success-modal').classList.remove('hidden');
+            document.getElementById('success-modal').classList.add('flex');
+            this.reset();
+        });
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            document.getElementById('success-modal').classList.remove('flex');
+        }
+    </script>
+</body>
+</html>
