@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
     <script>
         tailwind.config = {
             theme: {
@@ -22,24 +23,37 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
-        .tab-active { border-bottom: 3px solid #4CAF50; color: #4CAF50; }
-        .tab-inactive { border-bottom: 3px solid transparent; color: #9CA3AF; }
-        .tab-inactive:hover { color: #4CAF50; }
-        .live-indicator { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .match-card { transition: transform 0.2s; }
-        .match-card:hover { transform: translateY(-2px); }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        .admin-input { background: #111; border: 1px solid #222; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .admin-input:focus { border-color: #4CAF50; }
+        .admin-select { background: #111; border: 1px solid #222; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 14px; outline: none; }
+        .admin-select:focus { border-color: #4CAF50; }
+        .admin-btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .admin-btn-green { background: #1B5E20; color: #fff; }
+        .admin-btn-green:hover { background: #2E7D32; }
+        .admin-btn-red { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .admin-btn-red:hover { background: #ef4444; color: #fff; }
+        .admin-btn-gray { background: #333; color: #aaa; }
+        .admin-btn-gray:hover { background: #444; color: #fff; }
+        .status-upcoming { background: rgba(107,114,128,0.2); color: #9ca3af; border: 1px solid rgba(107,114,128,0.3); }
+        .status-live { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); animation: pulse 2s infinite; }
+        .status-completed { background: rgba(76,175,80,0.2); color: #4CAF50; border: 1px solid rgba(76,175,80,0.3); }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 12px 24px; border-radius: 8px; font-weight: 600; transform: translateX(120%); transition: transform 0.3s ease; }
+        .toast.show { transform: translateX(0); }
+        .toast-success { background: #1B5E20; color: #fff; border: 1px solid #4CAF50; }
+        .toast-error { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+        .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9998; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white page-transition">
+
     <!-- Navigation -->
-    <nav class="bg-scfc-dark border-b border-scfc-green sticky top-0 z-50">
+    <nav class="bg-scfc-dark/95 backdrop-blur-md border-b border-scfc-green/30 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <div class="flex items-center gap-3">
-                    <img src="logo.png" alt="SCFC Logo" class="h-14 w-14 object-contain rounded-full border-2 border-scfc-green">
+                    <img src="logo.png" alt="SCFC Logo" class="h-14 w-14 object-contain rounded-full border-2 border-scfc-green shadow-lg shadow-scfc-green/20">
                     <div>
                         <h1 class="text-xl font-bold text-white leading-tight">St. Catherine FC</h1>
                         <p class="text-xs text-scfc-accent">Eraviputhenthurai | Since 1953</p>
@@ -47,11 +61,11 @@
                 </div>
                 <div class="hidden md:block">
                     <div class="flex items-baseline space-x-1">
-                        <a href="index.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Home</a>
-                        <a href="about.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">About</a>
-                        <a href="tournament.html" class="bg-scfc-green text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-scfc-light transition">Tournament Hub</a>
-                        <a href="gallery.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Gallery</a>
-                        <a href="contact.html" class="text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Contact</a>
+                        <a href="index.html" class="nav-link text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Home</a>
+                        <a href="about.html" class="nav-link text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">About</a>
+                        <a href="tournament.html" class="nav-link active bg-scfc-green text-white px-4 py-2 rounded-md text-sm font-medium">Tournament Hub</a>
+                        <a href="gallery.html" class="nav-link text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Gallery</a>
+                        <a href="contact.html" class="nav-link text-gray-300 hover:bg-scfc-green hover:text-white px-4 py-2 rounded-md text-sm font-medium transition">Contact</a>
                     </div>
                 </div>
                 <div class="md:hidden">
@@ -61,7 +75,7 @@
                 </div>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-scfc-dark border-t border-scfc-green">
+        <div id="mobile-menu" class="hidden md:hidden bg-scfc-dark border-t border-scfc-green/30">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <a href="index.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
                 <a href="about.html" class="text-gray-300 hover:bg-scfc-green hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
@@ -73,35 +87,56 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="bg-gradient-to-b from-scfc-dark to-gray-900 py-12" style="padding-top: 80px;">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <img src="logo.png" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; height:400px; object-fit:contain; opacity:0.04; filter:grayscale(100%); pointer-events:none; z-index:0;">
-            <div class="text-center relative" style="position: relative; z-index: 1;">
-                <span class="bg-red-600 text-white px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider live-indicator">Upcoming</span>
-                <h1 class="text-4xl md:text-5xl font-extrabold mt-4 mb-2">39th All India Tournament</h1>
-                <p class="text-xl text-gray-400 mb-2">5-a-side One Day Football Tournament</p>
-                <p class="text-scfc-accent font-semibold"><i class="fas fa-calendar-alt mr-2"></i>June 27, 2026</p>
-            </div>
+    <section class="relative bg-gradient-to-b from-scfc-dark to-gray-900 py-16 overflow-hidden" style="padding-top: 80px;">
+        <div class="floating-footballs">
+            <div class="football">⚽</div>
+            <div class="football">⚽</div>
+            <div class="football">⚽</div>
+        </div>
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="absolute inset-0 pitch-pattern"></div>
+        <div class="player-silhouette player-dribble" style="bottom: 15%; left: -5%; opacity: 0.04;">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="#4CAF50"><circle cx="60" cy="20" r="10"/><rect x="55" y="30" width="10" height="35" rx="3"/><rect x="45" y="65" width="8" height="30" rx="3" transform="rotate(-10, 49, 65)"/><rect x="67" y="65" width="8" height="30" rx="3" transform="rotate(15, 71, 65)"/><rect x="50" y="33" width="25" height="8" rx="3" transform="rotate(-20, 62, 37)"/><circle cx="38" cy="35" r="5" fill="#4CAF50"/></svg>
+        </div>
+        <div class="player-silhouette player-kick" style="bottom: 25%; right: 5%; opacity: 0.04;">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="#4CAF50"><circle cx="55" cy="20" r="10"/><rect x="50" y="30" width="10" height="35" rx="3"/><rect x="40" y="65" width="8" height="28" rx="3"/><rect x="62" y="65" width="8" height="30" rx="3" transform="rotate(40, 66, 65)"/><rect x="60" y="33" width="25" height="8" rx="3" transform="rotate(20, 72, 37)"/></svg>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <span class="bg-red-500/20 text-red-400 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider inline-flex items-center gap-2 border border-red-500/30">
+                <span class="live-dot"></span> Upcoming
+            </span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mt-6 mb-2">
+                <span class="text-white">39th All India</span> <span class="gradient-text">Tournament</span>
+            </h1>
+            <p class="text-xl text-gray-300 mb-2">5-a-side One Day Football Tournament</p>
+            <p class="text-scfc-accent font-semibold"><i class="fas fa-calendar-alt mr-2"></i>June 27, 2026</p>
+            <div class="w-24 h-1 bg-scfc-green mx-auto rounded-full shadow-lg shadow-scfc-green/50 mt-4"></div>
         </div>
     </section>
 
     <!-- Tournament Tabs -->
     <section class="bg-scfc-dark border-b border-scfc-green/30 sticky top-20 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex overflow-x-auto scrollbar-hide">
-                <button onclick="switchTab('live')" id="tab-live" class="tab-active flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap">
+            <div class="flex overflow-x-auto">
+                <button onclick="switchTab('live')" id="tab-live" class="tab-active flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
                     <i class="fas fa-broadcast-tower mr-2"></i>Live
                 </button>
-                <button onclick="switchTab('fixtures')" id="tab-fixtures" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap">
+                <button onclick="switchTab('fixtures')" id="tab-fixtures" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
                     <i class="fas fa-calendar mr-2"></i>Fixtures
                 </button>
-                <button onclick="switchTab('standings')" id="tab-standings" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap">
+                <button onclick="switchTab('standings')" id="tab-standings" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
                     <i class="fas fa-table mr-2"></i>Standings
                 </button>
-                <button onclick="switchTab('results')" id="tab-results" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap">
+                <button onclick="switchTab('results')" id="tab-results" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
                     <i class="fas fa-check-circle mr-2"></i>Results
                 </button>
-                <button onclick="switchTab('teams')" id="tab-teams" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap">
+                <button onclick="switchTab('teams')" id="tab-teams" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
                     <i class="fas fa-shield-alt mr-2"></i>Teams
                 </button>
             </div>
@@ -114,648 +149,89 @@
 
             <!-- Live Tab -->
             <div id="content-live" class="tab-content">
-                <div class="bg-scfc-dark rounded-2xl p-8 md:p-12 border border-scfc-green/30 text-center">
-                    <div class="text-6xl mb-6">⚽</div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">TOURNAMENT DAY</h2>
+                <div class="bg-scfc-dark rounded-3xl p-8 md:p-12 border border-scfc-green/30 neon-border shadow-2xl text-center reveal">
+                    <div class="text-6xl mb-6 spin-slow inline-block">⚽</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 neon-text">TOURNAMENT DAY</h2>
                     <p class="text-gray-400 text-lg mb-8">Live scores will appear here on 27 June 2026.</p>
-
-                    <!-- Countdown Timer -->
                     <div class="grid grid-cols-4 gap-4 max-w-lg mx-auto">
-                        <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
-                            <div id="countdown-days" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
-                            <div class="text-xs text-gray-400 mt-1">Days</div>
+                        <div class="glass rounded-2xl p-4 neon-border">
+                            <div id="countdown-days" class="text-3xl md:text-4xl font-bold gradient-text">--</div>
+                            <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Days</div>
                         </div>
-                        <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
-                            <div id="countdown-hours" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
-                            <div class="text-xs text-gray-400 mt-1">Hours</div>
+                        <div class="glass rounded-2xl p-4 neon-border">
+                            <div id="countdown-hours" class="text-3xl md:text-4xl font-bold gradient-text">--</div>
+                            <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Hours</div>
                         </div>
-                        <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
-                            <div id="countdown-minutes" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
-                            <div class="text-xs text-gray-400 mt-1">Minutes</div>
+                        <div class="glass rounded-2xl p-4 neon-border">
+                            <div id="countdown-minutes" class="text-3xl md:text-4xl font-bold gradient-text">--</div>
+                            <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Minutes</div>
                         </div>
-                        <div class="bg-scfc-dark border border-scfc-green/30 rounded-xl p-4">
-                            <div id="countdown-seconds" class="text-3xl md:text-4xl font-bold text-scfc-accent">--</div>
-                            <div class="text-xs text-gray-400 mt-1">Seconds</div>
+                        <div class="glass rounded-2xl p-4 neon-border">
+                            <div id="countdown-seconds" class="text-3xl md:text-4xl font-bold gradient-text">--</div>
+                            <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Seconds</div>
                         </div>
                     </div>
                 </div>
+                <div id="live-matches-container" class="mt-6 space-y-4"></div>
             </div>
 
             <!-- Fixtures Tab -->
-            <div id="content-fixtures" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-white mb-6">Upcoming Matches</h2>
-                <div class="space-y-4">
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">10:00 AM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team A1</p>
-                                    <span class="text-xs text-gray-400">Pool A</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team A2</p>
-                                    <span class="text-xs text-gray-400">Pool A</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">10:30 AM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team A3</p>
-                                    <span class="text-xs text-gray-400">Pool A</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team A4</p>
-                                    <span class="text-xs text-gray-400">Pool A</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">11:00 AM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team B1</p>
-                                    <span class="text-xs text-gray-400">Pool B</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team B2</p>
-                                    <span class="text-xs text-gray-400">Pool B</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">11:30 AM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team B3</p>
-                                    <span class="text-xs text-gray-400">Pool B</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team B4</p>
-                                    <span class="text-xs text-gray-400">Pool B</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">2:00 PM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team C1</p>
-                                    <span class="text-xs text-gray-400">Pool C</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team C2</p>
-                                    <span class="text-xs text-gray-400">Pool C</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">2:30 PM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team C3</p>
-                                    <span class="text-xs text-gray-400">Pool C</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team C4</p>
-                                    <span class="text-xs text-gray-400">Pool C</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">3:00 PM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team D1</p>
-                                    <span class="text-xs text-gray-400">Pool D</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team D2</p>
-                                    <span class="text-xs text-gray-400">Pool D</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-scfc-dark rounded-xl p-6 border border-scfc-green/30">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <span class="text-scfc-accent font-semibold">3:30 PM</span>
-                            </div>
-                            <div class="flex items-center gap-6">
-                                <div class="text-right">
-                                    <p class="font-bold">Team D3</p>
-                                    <span class="text-xs text-gray-400">Pool D</span>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-500">VS</span>
-                                <div class="text-left">
-                                    <p class="font-bold">Team D4</p>
-                                    <span class="text-xs text-gray-400">Pool D</span>
-                                </div>
-                            </div>
-                            <button class="bg-scfc-green/20 text-scfc-accent px-4 py-2 rounded-lg text-sm hover:bg-scfc-green hover:text-white transition">
-                                <i class="fas fa-bell mr-1"></i>Remind
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="content-fixtures" class="tab-content hidden"></div>
 
             <!-- Standings Tab -->
-            <div id="content-standings" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-white mb-6">Pool Standings</h2>
-
-                <!-- Pool A -->
-                <div class="bg-scfc-dark rounded-xl border border-scfc-green/30 mb-6 overflow-hidden">
-                    <div class="bg-scfc-green px-6 py-3">
-                        <h3 class="font-bold text-lg"><i class="fas fa-layer-group mr-2"></i>Pool A</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-800">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Pos</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Team</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">P</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">W</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">D</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">L</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">GD</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">Pts</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pool-a-standings">
-                                <tr class="border-b border-gray-800 bg-scfc-green/10">
-                                    <td class="px-4 py-3 font-bold">1</td>
-                                    <td class="px-4 py-3 font-semibold">Team A1</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">2</td>
-                                    <td class="px-4 py-3 font-semibold">Team A2</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">3</td>
-                                    <td class="px-4 py-3 font-semibold">Team A3</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 font-bold">4</td>
-                                    <td class="px-4 py-3 font-semibold">Team A4</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Pool B -->
-                <div class="bg-scfc-dark rounded-xl border border-scfc-green/30 mb-6 overflow-hidden">
-                    <div class="bg-blue-600 px-6 py-3">
-                        <h3 class="font-bold text-lg"><i class="fas fa-layer-group mr-2"></i>Pool B</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-800">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Pos</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Team</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">P</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">W</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">D</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">L</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">GD</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">Pts</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pool-b-standings">
-                                <tr class="border-b border-gray-800 bg-scfc-green/10">
-                                    <td class="px-4 py-3 font-bold">1</td>
-                                    <td class="px-4 py-3 font-semibold">Team B1</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">2</td>
-                                    <td class="px-4 py-3 font-semibold">Team B2</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">3</td>
-                                    <td class="px-4 py-3 font-semibold">Team B3</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 font-bold">4</td>
-                                    <td class="px-4 py-3 font-semibold">Team B4</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Pool C -->
-                <div class="bg-scfc-dark rounded-xl border border-scfc-green/30 mb-6 overflow-hidden">
-                    <div class="bg-orange-600 px-6 py-3">
-                        <h3 class="font-bold text-lg"><i class="fas fa-layer-group mr-2"></i>Pool C</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-800">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Pos</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Team</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">P</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">W</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">D</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">L</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">GD</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">Pts</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pool-c-standings">
-                                <tr class="border-b border-gray-800 bg-scfc-green/10">
-                                    <td class="px-4 py-3 font-bold">1</td>
-                                    <td class="px-4 py-3 font-semibold">Team C1</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">2</td>
-                                    <td class="px-4 py-3 font-semibold">Team C2</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">3</td>
-                                    <td class="px-4 py-3 font-semibold">Team C3</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 font-bold">4</td>
-                                    <td class="px-4 py-3 font-semibold">Team C4</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Pool D -->
-                <div class="bg-scfc-dark rounded-xl border border-scfc-green/30 mb-6 overflow-hidden">
-                    <div class="bg-purple-600 px-6 py-3">
-                        <h3 class="font-bold text-lg"><i class="fas fa-layer-group mr-2"></i>Pool D</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-800">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Pos</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Team</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">P</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">W</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">D</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">L</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">GD</th>
-                                    <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">Pts</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pool-d-standings">
-                                <tr class="border-b border-gray-800 bg-scfc-green/10">
-                                    <td class="px-4 py-3 font-bold">1</td>
-                                    <td class="px-4 py-3 font-semibold">Team D1</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">2</td>
-                                    <td class="px-4 py-3 font-semibold">Team D2</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="px-4 py-3 font-bold">3</td>
-                                    <td class="px-4 py-3 font-semibold">Team D3</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 font-bold">4</td>
-                                    <td class="px-4 py-3 font-semibold">Team D4</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center">0</td>
-                                    <td class="px-4 py-3 text-center font-bold text-scfc-accent">0</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <div id="content-standings" class="tab-content hidden"></div>
 
             <!-- Results Tab -->
-            <div id="content-results" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-white mb-6">Match Results</h2>
-                <div class="bg-scfc-dark rounded-2xl p-8 md:p-12 border border-scfc-green/30 text-center">
-                    <div class="text-6xl mb-6">⚽</div>
-                    <p class="text-gray-400 text-lg">Match results will appear here after the tournament begins on 27 June 2026.</p>
-                </div>
-            </div>
+            <div id="content-results" class="tab-content hidden"></div>
 
             <!-- Teams Tab -->
-            <div id="content-teams" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-white mb-6">Tournament Teams</h2>
-
-                <!-- Pool A Teams -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-scfc-accent mb-4 flex items-center">
-                        <span class="bg-scfc-green text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">A</span>
-                        Pool A
-                    </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-scfc-green rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">A1</div>
-                            <p class="font-semibold text-sm">Team A1</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-scfc-green rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">A2</div>
-                            <p class="font-semibold text-sm">Team A2</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-scfc-green rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">A3</div>
-                            <p class="font-semibold text-sm">Team A3</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-scfc-green rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">A4</div>
-                            <p class="font-semibold text-sm">Team A4</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pool B Teams -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-scfc-accent mb-4 flex items-center">
-                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">B</span>
-                        Pool B
-                    </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">B1</div>
-                            <p class="font-semibold text-sm">Team B1</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">B2</div>
-                            <p class="font-semibold text-sm">Team B2</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">B3</div>
-                            <p class="font-semibold text-sm">Team B3</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">B4</div>
-                            <p class="font-semibold text-sm">Team B4</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pool C Teams -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-scfc-accent mb-4 flex items-center">
-                        <span class="bg-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">C</span>
-                        Pool C
-                    </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">C1</div>
-                            <p class="font-semibold text-sm">Team C1</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">C2</div>
-                            <p class="font-semibold text-sm">Team C2</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">C3</div>
-                            <p class="font-semibold text-sm">Team C3</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">C4</div>
-                            <p class="font-semibold text-sm">Team C4</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pool D Teams -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-scfc-accent mb-4 flex items-center">
-                        <span class="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">D</span>
-                        Pool D
-                    </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">D1</div>
-                            <p class="font-semibold text-sm">Team D1</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">D2</div>
-                            <p class="font-semibold text-sm">Team D2</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">D3</div>
-                            <p class="font-semibold text-sm">Team D3</p>
-                        </div>
-                        <div class="bg-scfc-dark rounded-lg p-4 border border-scfc-green/30 text-center hover:border-scfc-green transition">
-                            <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold">D4</div>
-                            <p class="font-semibold text-sm">Team D4</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="content-teams" class="tab-content hidden"></div>
         </div>
     </main>
 
-    <!-- Admin Panel -->
-    <div id="admin-panel" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 overflow-y-auto">
-        <div class="bg-gray-900 border border-scfc-green rounded-xl p-8 max-w-2xl w-full mx-4 my-8">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-white"><i class="fas fa-cog mr-2"></i>Admin Panel</h3>
-                <button onclick="closeAdminPanel()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+    <!-- Admin Overlay -->
+    <div id="admin-panel" class="fixed inset-0 bg-black/95 hidden z-[2000] overflow-y-auto">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <!-- Admin Header -->
+            <div class="flex items-center justify-between mb-6 sticky top-0 bg-black/95 backdrop-blur py-3 z-10 border-b border-gray-800">
+                <h2 class="text-2xl font-bold text-white"><i class="fas fa-cog mr-2 text-scfc-accent"></i>Admin Panel</h2>
+                <button onclick="closeAdminPanel()" class="text-gray-400 hover:text-white text-3xl leading-none transition">&times;</button>
             </div>
-
-            <div class="mb-6">
-                <h4 class="text-lg font-semibold text-scfc-accent mb-4">Select Match</h4>
-                <select id="admin-match-select" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white mb-4 focus:border-scfc-green focus:outline-none">
-                    <optgroup label="Pool A">
-                        <option value="a1-a2">Team A1 vs Team A2</option>
-                        <option value="a3-a4">Team A3 vs Team A4</option>
-                    </optgroup>
-                    <optgroup label="Pool B">
-                        <option value="b1-b2">Team B1 vs Team B2</option>
-                        <option value="b3-b4">Team B3 vs Team B4</option>
-                    </optgroup>
-                    <optgroup label="Pool C">
-                        <option value="c1-c2">Team C1 vs Team C2</option>
-                        <option value="c3-c4">Team C3 vs Team C4</option>
-                    </optgroup>
-                    <optgroup label="Pool D">
-                        <option value="d1-d2">Team D1 vs Team D2</option>
-                        <option value="d3-d4">Team D3 vs Team D4</option>
-                    </optgroup>
-                </select>
+            <!-- Admin Tabs -->
+            <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+                <button onclick="switchAdminTab('teams')" id="admin-tab-teams" class="admin-btn admin-btn-green whitespace-nowrap"><i class="fas fa-shield-alt mr-1"></i>Teams</button>
+                <button onclick="switchAdminTab('fixtures')" id="admin-tab-fixtures" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-calendar mr-1"></i>Fixtures</button>
+                <button onclick="switchAdminTab('results')" id="admin-tab-results" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-futbol mr-1"></i>Results</button>
+                <button onclick="switchAdminTab('standings')" id="admin-tab-standings" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-table mr-1"></i>Standings</button>
+                <button onclick="switchAdminTab('gallery')" id="admin-tab-gallery" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-images mr-1"></i>Gallery</button>
+                <button onclick="switchAdminTab('settings')" id="admin-tab-settings" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-key mr-1"></i>Settings</button>
             </div>
-
-            <div class="mb-6">
-                <h4 class="text-lg font-semibold text-scfc-accent mb-4">Save Changes</h4>
-                <button onclick="saveScores()" class="w-full bg-scfc-green hover:bg-scfc-light text-white py-3 rounded-lg font-semibold transition">
-                    <i class="fas fa-save mr-2"></i>Save Changes
-                </button>
+            <!-- Admin Content -->
+            <div id="admin-content"></div>
+            <!-- Reset -->
+            <div class="mt-8 pt-6 border-t border-gray-800">
+                <button onclick="confirmReset()" class="admin-btn admin-btn-red w-full"><i class="fas fa-trash-alt mr-2"></i>Reset All Data to Defaults</button>
             </div>
+        </div>
+    </div>
 
-            <div>
-                <h4 class="text-lg font-semibold text-scfc-accent mb-4">Reset Data</h4>
-                <button onclick="resetData()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition">
-                    <i class="fas fa-trash-alt mr-2"></i>Reset All Data
-                </button>
+    <!-- Toast -->
+    <div id="toast" class="toast toast-success"></div>
+
+    <!-- Confirm Dialog -->
+    <div id="confirm-dialog" class="confirm-overlay hidden">
+        <div class="bg-scfc-dark border border-scfc-green/50 rounded-xl p-6 max-w-sm w-full mx-4 neon-border">
+            <h3 id="confirm-title" class="text-lg font-bold text-white mb-3"></h3>
+            <p id="confirm-message" class="text-gray-400 mb-6"></p>
+            <div class="flex gap-3">
+                <button id="confirm-yes" class="admin-btn admin-btn-red flex-1">Confirm</button>
+                <button id="confirm-no" class="admin-btn admin-btn-gray flex-1">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-black border-t border-scfc-green">
+    <footer class="bg-black border-t border-scfc-green/30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-2">
@@ -781,14 +257,13 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Follow Us</h4>
                     <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/st.catherine.official?igsh=aDkwdTZyMDY4bW40" target="_blank" class="w-10 h-10 bg-scfc-green/20 rounded-full flex items-center justify-center text-scfc-accent hover:bg-scfc-green hover:text-white transition">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+                        <a href="https://www.instagram.com/st.catherine.official?igsh=aDkwdTZyMDY4bW40" target="_blank" class="w-10 h-10 bg-scfc-green/20 rounded-full flex items-center justify-center text-scfc-accent hover:bg-scfc-green hover:text-white transition neon-button"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/1BgGKzVyY4/" target="_blank" class="w-10 h-10 bg-scfc-green/20 rounded-full flex items-center justify-center text-scfc-accent hover:bg-scfc-green hover:text-white transition neon-button"><i class="fab fa-facebook-f"></i></a>
                     </div>
                 </div>
             </div>
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 text-sm text-center md:text-left">Since 1953 | Eraviputhenthurai | One Team. One Dream. ⚽❤️</p>
+                <p class="text-gray-500 text-sm text-center md:text-left">Since 1953 | Eraviputhenthurai | One Team. One Dream.</p>
                 <button onclick="openAdminModal()" class="mt-4 md:mt-0 text-gray-600 hover:text-scfc-accent transition" title="Admin Panel">
                     <i class="fas fa-cog"></i>
                 </button>
@@ -798,11 +273,11 @@
 
     <!-- Admin Login Modal -->
     <div id="admin-login-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
-        <div class="bg-gray-900 border border-scfc-green rounded-xl p-8 max-w-md w-full mx-4">
+        <div class="bg-scfc-dark border border-scfc-green/50 rounded-xl p-8 max-w-md w-full mx-4 neon-border">
             <h3 class="text-2xl font-bold text-white mb-4">Admin Login</h3>
             <input type="password" id="admin-password" placeholder="Enter password" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white mb-4 focus:border-scfc-green focus:outline-none">
             <div class="flex gap-4">
-                <button onclick="checkAdminPassword()" class="flex-1 bg-scfc-green hover:bg-scfc-light text-white py-2 rounded-lg font-semibold transition">Login</button>
+                <button onclick="checkAdminPassword()" class="neon-button ripple flex-1 bg-scfc-green hover:bg-scfc-light text-white py-2 rounded-lg font-semibold transition">Login</button>
                 <button onclick="closeAdminLoginModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition">Cancel</button>
             </div>
             <p id="admin-error" class="text-red-500 text-sm mt-3 hidden">Incorrect password!</p>
@@ -810,98 +285,812 @@
     </div>
 
     <script>
-        // Countdown Timer
-        function updateCountdown() {
-            const tournamentDate = new Date('2026-06-27T09:00:00');
-            const now = new Date();
-            const diff = tournamentDate - now;
+    // ===== DATA LAYER =====
+    const POOL_COLORS = {
+        A: { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400', header: 'from-scfc-green to-scfc-light', badge: 'bg-green-500/20 text-green-400 border-green-500/30', hex: '#16a34a', hexLight: '#22c55e' },
+        B: { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400', header: 'from-blue-600 to-blue-500', badge: 'bg-blue-500/20 text-blue-400 border-blue-500/30', hex: '#2563eb', hexLight: '#3b82f6' },
+        C: { bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-400', header: 'from-orange-500 to-orange-400', badge: 'bg-orange-500/20 text-orange-400 border-orange-500/30', hex: '#ea580c', hexLight: '#f97316' },
+        D: { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400', header: 'from-purple-600 to-purple-500', badge: 'bg-purple-500/20 text-purple-400 border-purple-500/30', hex: '#9333ea', hexLight: '#a855f7' }
+    };
 
-            if (diff > 0) {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    const POOL_LETTERS = { A: 'A', B: 'B', C: 'C', D: 'D' };
 
-                document.getElementById('countdown-days').textContent = days.toString().padStart(2, '0');
-                document.getElementById('countdown-hours').textContent = hours.toString().padStart(2, '0');
-                document.getElementById('countdown-minutes').textContent = minutes.toString().padStart(2, '0');
-                document.getElementById('countdown-seconds').textContent = seconds.toString().padStart(2, '0');
-            } else {
-                document.getElementById('countdown-days').textContent = '00';
-                document.getElementById('countdown-hours').textContent = '00';
-                document.getElementById('countdown-minutes').textContent = '00';
-                document.getElementById('countdown-seconds').textContent = '00';
+    function generateDefaultData() {
+        const pools = {
+            A: { name: 'Pool A', teams: ['Team A1', 'Team A2', 'Team A3', 'Team A4'] },
+            B: { name: 'Pool B', teams: ['Team B1', 'Team B2', 'Team B3', 'Team B4'] },
+            C: { name: 'Pool C', teams: ['Team C1', 'Team C2', 'Team C3', 'Team C4'] },
+            D: { name: 'Pool D', teams: ['Team D1', 'Team D2', 'Team D3', 'Team D4'] }
+        };
+        const times = {
+            A: ['10:00 AM','10:30 AM','11:00 AM','2:00 PM','2:30 PM','3:00 PM'],
+            B: ['10:15 AM','10:45 AM','11:15 AM','2:15 PM','2:45 PM','3:15 PM'],
+            C: ['10:30 AM','11:00 AM','11:30 AM','3:30 PM','4:00 PM','4:30 PM'],
+            D: ['10:45 AM','11:15 AM','11:45 AM','3:45 PM','4:15 PM','4:45 PM']
+        };
+        const matches = [];
+        let id = 1;
+        for (const pk of ['A','B','C','D']) {
+            const t = pools[pk].teams;
+            let ti = 0;
+            for (let i = 0; i < t.length; i++) {
+                for (let j = i + 1; j < t.length; j++) {
+                    matches.push({ id: id++, pool: pk, teamA: t[i], teamB: t[j], scoreA: null, scoreB: null, status: 'upcoming', time: times[pk][ti++] });
+                }
             }
         }
+        return { version: 1, pools, matches, adjustments: {}, images: { gallery: [] }, logos: {}, settings: { imgbbApiKey: '' } };
+    }
 
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+    let tournamentData;
 
-        // Mobile Menu
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        });
+    function loadData() {
+        const stored = localStorage.getItem('scfc_tournament');
+        if (stored) {
+            try {
+                const data = JSON.parse(stored);
+                if (!data.images) data.images = { gallery: [] };
+                if (!data.logos) data.logos = {};
+                if (!data.settings) data.settings = { imgbbApiKey: '' };
+                return data;
+            } catch(e) {}
+        }
+        const data = generateDefaultData();
+        localStorage.setItem('scfc_tournament', JSON.stringify(data));
+        return data;
+    }
 
-        // Tab Switching
-        function switchTab(tabName) {
-            // Hide all content
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('content-' + tabName).classList.remove('hidden');
+    function saveData() {
+        localStorage.setItem('scfc_tournament', JSON.stringify(tournamentData));
+    }
 
-            // Update tab styles
-            document.querySelectorAll('[id^="tab-"]').forEach(el => {
-                el.classList.remove('tab-active');
-                el.classList.add('tab-inactive');
+    // ===== STANDINGS CALCULATION =====
+    function calculateStandings(poolKey) {
+        const teams = tournamentData.pools[poolKey].teams;
+        const completed = tournamentData.matches.filter(m => m.pool === poolKey && m.status === 'completed');
+        const standings = teams.map(name => ({ name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, pts: 0 }));
+        for (const m of completed) {
+            const h = standings.find(s => s.name === m.teamA);
+            const a = standings.find(s => s.name === m.teamB);
+            if (!h || !a) continue;
+            h.played++; a.played++;
+            h.gf += m.scoreA; h.ga += m.scoreB;
+            a.gf += m.scoreB; a.ga += m.scoreA;
+            if (m.scoreA > m.scoreB) { h.won++; a.lost++; h.pts += 3; }
+            else if (m.scoreA < m.scoreB) { a.won++; h.lost++; a.pts += 3; }
+            else { h.drawn++; a.drawn++; h.pts++; a.pts++; }
+        }
+        for (const s of standings) {
+            s.gd = s.gf - s.ga;
+            const adj = tournamentData.adjustments[s.name];
+            if (adj) { s.pts += (adj.pointsAdj || 0); s.adj = adj.pointsAdj || 0; s.note = adj.note || ''; }
+            else { s.adj = 0; s.note = ''; }
+        }
+        standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+        return standings;
+    }
+
+    // ===== RENDERING =====
+    function renderAll() {
+        renderLive();
+        renderFixtures();
+        renderStandings();
+        renderResults();
+        renderTeams();
+    }
+
+    function renderLive() {
+        const live = tournamentData.matches.filter(m => m.status === 'live');
+        const upcoming = tournamentData.matches.filter(m => m.status === 'upcoming').slice(0, 3);
+        let html = '';
+        if (live.length > 0) {
+            html += '<h2 class="text-2xl font-bold text-white mb-4 neon-text"><i class="fas fa-broadcast-tower mr-2 text-red-400"></i>Live Now</h2>';
+            html += '<div class="space-y-4">';
+            for (const m of live) {
+                const c = POOL_COLORS[m.pool];
+                html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} neon-border">
+                    <div class="flex items-center justify-between">
+                        <span class="${c.badge} px-3 py-1 rounded-full text-xs font-semibold border">${m.pool}</span>
+                        <span class="status-live px-3 py-1 rounded-full text-xs font-bold">LIVE</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-4 mt-4">
+                        <div class="text-right flex-1"><p class="font-bold text-white">${m.teamA}</p></div>
+                        <div class="text-center px-4"><span class="text-3xl font-bold gradient-text">${m.scoreA ?? 0} - ${m.scoreB ?? 0}</span></div>
+                        <div class="text-left flex-1"><p class="font-bold text-white">${m.teamB}</p></div>
+                    </div>
+                </div>`;
+            }
+            html += '</div>';
+        }
+        if (upcoming.length > 0 && live.length === 0) {
+            html += '<h2 class="text-xl font-bold text-white mb-4 mt-8"><i class="fas fa-clock mr-2 text-scfc-accent"></i>Up Next</h2>';
+            html += '<div class="space-y-3">';
+            for (const m of upcoming) {
+                const c = POOL_COLORS[m.pool];
+                html += `<div class="bg-scfc-dark rounded-xl p-4 border ${c.border}">
+                    <div class="flex items-center justify-between">
+                        <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">${m.time}</span>
+                        <div class="flex items-center gap-4">
+                            <span class="font-semibold text-white">${m.teamA}</span>
+                            <span class="text-sm gradient-text">vs</span>
+                            <span class="font-semibold text-white">${m.teamB}</span>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            html += '</div>';
+        }
+        document.getElementById('live-matches-container').innerHTML = html;
+    }
+
+    function renderFixtures() {
+        const matches = tournamentData.matches.filter(m => m.status === 'upcoming' || m.status === 'live');
+        if (matches.length === 0) {
+            document.getElementById('content-fixtures').innerHTML = `<div class="bg-scfc-dark rounded-3xl p-8 border border-scfc-green/30 neon-border shadow-2xl text-center reveal">
+                <div class="text-6xl mb-6 spin-slow inline-block">⚽</div>
+                <p class="text-gray-400 text-lg">No upcoming fixtures. All matches have been played!</p>
+            </div>`;
+            return;
+        }
+        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Upcoming Matches</h2><div class="space-y-4">';
+        const poolOrder = ['A','B','C','D'];
+        for (const pk of poolOrder) {
+            const pm = matches.filter(m => m.pool === pk);
+            if (pm.length === 0) continue;
+            const c = POOL_COLORS[pk];
+            for (const m of pm) {
+                const statusBadge = m.status === 'live'
+                    ? '<span class="status-live px-2 py-1 rounded-full text-xs font-bold">LIVE</span>'
+                    : '';
+                html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} card-hover neon-border reveal">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="text-center md:text-left">
+                            <span class="${c.badge} px-3 py-1 rounded-full text-sm font-semibold border">${m.time}</span>
+                            ${statusBadge}
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="text-right"><p class="font-bold text-white">${m.teamA}</p><span class="text-xs text-gray-400">${c.text === 'text-green-400' ? 'Pool ' + pk : 'Pool ' + pk}</span></div>
+                            <span class="text-2xl font-bold gradient-text">VS</span>
+                            <div class="text-left"><p class="font-bold text-white">${m.teamB}</p><span class="text-xs text-gray-400">Pool ${pk}</span></div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+        }
+        html += '</div>';
+        document.getElementById('content-fixtures').innerHTML = html;
+    }
+
+    function renderStandings() {
+        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Pool Standings</h2>';
+        for (const pk of ['A','B','C','D']) {
+            const c = POOL_COLORS[pk];
+            const standings = calculateStandings(pk);
+            html += `<div class="bg-scfc-dark rounded-2xl border ${c.border} mb-6 overflow-hidden reveal">
+                <div class="bg-gradient-to-r ${c.header} px-6 py-3">
+                    <h3 class="font-bold text-lg text-white"><i class="fas fa-layer-group mr-2"></i>${tournamentData.pools[pk].name}</h3>
+                </div>
+                <div class="overflow-x-auto"><table class="w-full">
+                    <thead class="bg-gray-800"><tr>
+                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">#</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Team</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">P</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">W</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">D</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">L</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">GD</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">Pts</th>
+                    </tr></thead><tbody>`;
+            standings.forEach((s, i) => {
+                const rowBg = i === 0 ? c.bg + ' ' + c.border.replace('border-','hover:bg-').replace('/30','/20') : 'hover:bg-gray-800/50';
+                const ptsClass = i === 0 ? 'font-bold gradient-text' : 'font-bold ' + c.text;
+                html += `<tr class="border-b border-gray-800 ${rowBg} transition">
+                    <td class="px-4 py-3 font-bold text-white">${i + 1}</td>
+                    <td class="px-4 py-3 font-semibold text-white">${s.name}</td>
+                    <td class="px-4 py-3 text-center text-gray-300">${s.played}</td>
+                    <td class="px-4 py-3 text-center text-gray-300">${s.won}</td>
+                    <td class="px-4 py-3 text-center text-gray-300">${s.drawn}</td>
+                    <td class="px-4 py-3 text-center text-gray-300">${s.lost}</td>
+                    <td class="px-4 py-3 text-center text-gray-300">${s.gd > 0 ? '+' + s.gd : s.gd}</td>
+                    <td class="px-4 py-3 text-center ${ptsClass}">${s.pts}</td>
+                </tr>`;
             });
-            document.getElementById('tab-' + tabName).classList.remove('tab-inactive');
-            document.getElementById('tab-' + tabName).classList.add('tab-active');
+            html += '</tbody></table></div></div>';
         }
+        document.getElementById('content-standings').innerHTML = html;
+    }
 
-        // Admin Panel
-        function openAdminModal() {
-            document.getElementById('admin-login-modal').classList.remove('hidden');
-            document.getElementById('admin-login-modal').classList.add('flex');
+    function renderResults() {
+        const completed = tournamentData.matches.filter(m => m.status === 'completed');
+        if (completed.length === 0) {
+            document.getElementById('content-results').innerHTML = `<div class="bg-scfc-dark rounded-3xl p-8 md:p-12 border border-scfc-green/30 neon-border shadow-2xl text-center reveal">
+                <div class="text-6xl mb-6 spin-slow inline-block">⚽</div>
+                <p class="text-gray-400 text-lg">Match results will appear here after the tournament begins on 27 June 2026.</p>
+            </div>`;
+            return;
         }
-
-        function closeAdminLoginModal() {
-            document.getElementById('admin-login-modal').classList.add('hidden');
-            document.getElementById('admin-login-modal').classList.remove('flex');
-            document.getElementById('admin-password').value = '';
-            document.getElementById('admin-error').classList.add('hidden');
+        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Match Results</h2><div class="space-y-4">';
+        for (const m of completed) {
+            const c = POOL_COLORS[m.pool];
+            const winnerA = m.scoreA > m.scoreB;
+            const winnerB = m.scoreB > m.scoreA;
+            html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} reveal">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="${c.badge} px-3 py-1 rounded-full text-xs font-semibold border">Pool ${m.pool}</span>
+                    <span class="status-completed px-3 py-1 rounded-full text-xs font-bold">FT</span>
+                </div>
+                <div class="flex items-center justify-center gap-4">
+                    <div class="text-right flex-1"><p class="font-bold ${winnerA ? 'text-green-400' : 'text-white'}">${m.teamA}</p></div>
+                    <div class="text-center px-4"><span class="text-3xl font-bold gradient-text">${m.scoreA} - ${m.scoreB}</span></div>
+                    <div class="text-left flex-1"><p class="font-bold ${winnerB ? 'text-green-400' : 'text-white'}">${m.teamB}</p></div>
+                </div>
+            </div>`;
         }
+        html += '</div>';
+        document.getElementById('content-results').innerHTML = html;
+    }
 
-        function checkAdminPassword() {
-            const password = document.getElementById('admin-password').value;
-            if (password === 'scfc2026') {
-                closeAdminLoginModal();
-                document.getElementById('admin-panel').classList.remove('hidden');
-                document.getElementById('admin-panel').classList.add('flex');
-            } else {
-                document.getElementById('admin-error').classList.remove('hidden');
-            }
+    function renderTeams() {
+        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Tournament Teams</h2>';
+        for (const pk of ['A','B','C','D']) {
+            const pool = tournamentData.pools[pk];
+            const c = POOL_COLORS[pk];
+            html += `<div class="mb-8 reveal">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="bg-gradient-to-r ${c.header} text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3 shadow-lg">${pk}</span>
+                    <span class="${c.text}">${pool.name}</span>
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">`;
+            pool.teams.forEach((team) => {
+                const initials = team.split(' ').pop().substring(0, 2);
+                const logo = tournamentData.logos[team];
+                const imgHtml = logo
+                    ? `<img src="${logo}" class="w-12 h-12 rounded-full object-cover mx-auto mb-2 shadow-lg" alt="${team}">`
+                    : `<div class="w-12 h-12 bg-gradient-to-r ${c.header} rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold text-white shadow-lg">${initials}</div>`;
+                html += `<div class="bg-gray-900 rounded-xl p-4 border ${c.border} text-center card-hover card-glow">
+                    ${imgHtml}
+                    <p class="font-semibold text-sm text-white">${team}</p>
+                </div>`;
+            });
+            html += '</div></div>';
         }
+        document.getElementById('content-teams').innerHTML = html;
+    }
 
-        function closeAdminPanel() {
-            document.getElementById('admin-panel').classList.add('hidden');
-            document.getElementById('admin-panel').classList.remove('flex');
+    // ===== ADMIN RENDERING =====
+    let adminTab = 'teams';
+
+    function switchAdminTab(tab) {
+        adminTab = tab;
+        document.querySelectorAll('[id^="admin-tab-"]').forEach(el => { el.className = 'admin-btn admin-btn-gray whitespace-nowrap'; });
+        document.getElementById('admin-tab-' + tab).className = 'admin-btn admin-btn-green whitespace-nowrap';
+        renderAdminContent();
+    }
+
+    function renderAdminContent() {
+        const el = document.getElementById('admin-content');
+        if (adminTab === 'teams') el.innerHTML = renderAdminTeams();
+        else if (adminTab === 'fixtures') el.innerHTML = renderAdminFixtures();
+        else if (adminTab === 'results') el.innerHTML = renderAdminResults();
+        else if (adminTab === 'standings') el.innerHTML = renderAdminStandings();
+        else if (adminTab === 'gallery') el.innerHTML = renderAdminGallery();
+        else if (adminTab === 'settings') el.innerHTML = renderAdminSettings();
+    }
+
+    function renderAdminTeams() {
+        let html = '';
+        for (const pk of ['A','B','C','D']) {
+            const pool = tournamentData.pools[pk];
+            const c = POOL_COLORS[pk];
+            html += `<div class="mb-6">
+                <h3 class="text-lg font-bold mb-3 ${c.text}"><i class="fas fa-layer-group mr-2"></i>${pool.name}</h3>
+                <div class="bg-gray-900 rounded-lg border ${c.border} divide-y divide-gray-800">`;
+            pool.teams.forEach((team, i) => {
+                const logo = tournamentData.logos[team];
+                const logoHtml = logo ? `<img src="${logo}" class="w-8 h-8 rounded-full object-cover mr-3 border border-gray-700">` : `<div class="w-8 h-8 bg-gradient-to-r ${c.header} rounded-full flex items-center justify-center mr-3 text-xs font-bold text-white">${team.split(' ').pop().substring(0,2)}</div>`;
+                html += `<div class="flex items-center justify-between px-4 py-3" id="team-row-${pk}-${i}">
+                    <div class="flex items-center">${logoHtml}<span class="font-semibold text-white" id="team-name-${pk}-${i}">${team}</span></div>
+                    <div class="flex gap-2">
+                        <button onclick="uploadTeamLogo('${pk}',${i})" class="text-gray-400 hover:text-scfc-accent transition text-sm" title="Upload Logo"><i class="fas fa-camera"></i></button>
+                        <button onclick="startRenameTeam('${pk}',${i})" class="text-gray-400 hover:text-scfc-accent transition text-sm" title="Rename"><i class="fas fa-pen"></i></button>
+                        <button onclick="deleteTeam('${pk}',${i})" class="text-gray-400 hover:text-red-400 transition text-sm" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <input type="file" id="logo-input-${pk}-${i}" accept="image/*" class="hidden" onchange="handleTeamLogoUpload('${pk}',${i},this)">
+                </div>`;
+            });
+            html += `</div>
+                <button onclick="addTeam('${pk}')" class="mt-2 admin-btn admin-btn-green w-full text-sm"><i class="fas fa-plus mr-1"></i>Add Team to ${pool.name}</button>
+            </div>`;
         }
+        return html;
+    }
 
-        function saveScores() {
-            alert('Changes saved successfully!');
+    function startRenameTeam(pk, idx) {
+        const oldName = tournamentData.pools[pk].teams[idx];
+        const row = document.getElementById('team-row-' + pk + '-' + idx);
+        row.innerHTML = `<div class="flex items-center gap-2 flex-1">
+            <input type="text" id="rename-input-${pk}-${idx}" value="${oldName}" class="admin-input flex-1">
+            <button onclick="saveRename('${pk}',${idx},'${oldName.replace(/'/g,"\\'")}')" class="text-green-400 hover:text-green-300"><i class="fas fa-check"></i></button>
+            <button onclick="renderAdminContent()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+        </div>`;
+        document.getElementById('rename-input-' + pk + '-' + idx).focus();
+    }
+
+    function saveRename(pk, idx, oldName) {
+        const input = document.getElementById('rename-input-' + pk + '-' + idx);
+        const newName = input.value.trim();
+        if (!newName) { showToast('Team name cannot be empty', 'error'); return; }
+        tournamentData.pools[pk].teams[idx] = newName;
+        for (const m of tournamentData.matches) {
+            if (m.teamA === oldName) m.teamA = newName;
+            if (m.teamB === oldName) m.teamB = newName;
         }
-
-        function resetData() {
-            if (confirm('Are you sure you want to reset all data?')) {
-                alert('Data reset successfully!');
-            }
+        if (tournamentData.adjustments[oldName]) {
+            tournamentData.adjustments[newName] = tournamentData.adjustments[oldName];
+            delete tournamentData.adjustments[oldName];
         }
+        saveData(); renderAll(); renderAdminContent();
+        showToast('Team renamed to "' + newName + '"');
+    }
 
-        // Check for admin hash on load
-        window.addEventListener('load', function() {
-            if (window.location.hash === '#admin') {
-                openAdminModal();
-            }
+    function deleteTeam(pk, idx) {
+        const name = tournamentData.pools[pk].teams[idx];
+        showConfirm('Delete Team', 'Remove "' + name + '" and all their fixtures from ' + tournamentData.pools[pk].name + '?', () => {
+            tournamentData.matches = tournamentData.matches.filter(m => m.teamA !== name && m.teamB !== name);
+            tournamentData.pools[pk].teams.splice(idx, 1);
+            delete tournamentData.adjustments[name];
+            saveData(); renderAll(); renderAdminContent();
+            showToast('Team deleted');
         });
+    }
+
+    function addTeam(pk) {
+        const pool = tournamentData.pools[pk];
+        const newName = 'New Team ' + pk + (pool.teams.length + 1);
+        pool.teams.push(newName);
+        saveData(); renderAll(); renderAdminContent();
+        showToast('Team added. Add fixtures in the Fixtures tab.');
+    }
+
+    let adminFixtureFilter = 'all';
+
+    function renderAdminFixtures() {
+        const filterPk = adminFixtureFilter;
+        const matches = filterPk === 'all' ? tournamentData.matches : tournamentData.matches.filter(m => m.pool === filterPk);
+        let filterHtml = '<div class="flex gap-2 mb-4 overflow-x-auto pb-2">';
+        filterHtml += `<button onclick="adminFixtureFilter='all';renderAdminContent()" class="admin-btn ${filterPk === 'all' ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">All</button>`;
+        for (const pk of ['A','B','C','D']) {
+            filterHtml += `<button onclick="adminFixtureFilter='${pk}';renderAdminContent()" class="admin-btn ${filterPk === pk ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">Pool ${pk}</button>`;
+        }
+        filterHtml += '</div>';
+
+        let addFormHtml = `<div class="bg-gray-900 rounded-lg border border-gray-700 p-4 mb-4">
+            <h4 class="font-semibold text-white mb-3"><i class="fas fa-plus-circle mr-2 text-scfc-accent"></i>Add Fixture</h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <select id="add-fixture-pool" class="admin-select" onchange="updateAddFixtureTeams()">
+                    <option value="A">Pool A</option><option value="B">Pool B</option><option value="C">Pool C</option><option value="D">Pool D</option>
+                </select>
+                <select id="add-fixture-teama" class="admin-select"></select>
+                <select id="add-fixture-teamb" class="admin-select"></select>
+                <input type="text" id="add-fixture-time" class="admin-input" placeholder="e.g. 10:00 AM">
+            </div>
+            <button onclick="addFixture()" class="admin-btn admin-btn-green w-full mt-3">Add Fixture</button>
+        </div>`;
+
+        let listHtml = '<div class="space-y-3">';
+        matches.forEach(m => {
+            const c = POOL_COLORS[m.pool];
+            const statusClass = m.status === 'live' ? 'status-live' : m.status === 'completed' ? 'status-completed' : 'status-upcoming';
+            listHtml += `<div class="bg-gray-900 rounded-lg border ${c.border} p-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">Pool ${m.pool}</span>
+                    <span class="text-xs text-gray-400">#${m.id}</span>
+                    <span class="${statusClass} px-2 py-1 rounded-full text-xs font-bold">${m.status === 'completed' ? 'FT' : m.status === 'live' ? 'LIVE' : 'Upcoming'}</span>
+                </div>
+                <div class="mt-2 text-sm font-semibold text-white">${m.teamA} vs ${m.teamB}</div>
+                <div class="text-xs text-gray-400 mt-1"><i class="fas fa-clock mr-1"></i>${m.time}</div>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="deleteFixture(${m.id})" class="admin-btn admin-btn-red text-xs py-1 px-3"><i class="fas fa-trash mr-1"></i>Delete</button>
+                </div>
+            </div>`;
+        });
+        listHtml += '</div>';
+        return filterHtml + addFormHtml + listHtml;
+    }
+
+    function updateAddFixtureTeams() {
+        const pk = document.getElementById('add-fixture-pool').value;
+        const teams = tournamentData.pools[pk].teams;
+        const selA = document.getElementById('add-fixture-teama');
+        const selB = document.getElementById('add-fixture-teamb');
+        selA.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+        selB.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+        if (teams.length > 1) selB.selectedIndex = 1;
+    }
+
+    function addFixture() {
+        const pk = document.getElementById('add-fixture-pool').value;
+        const teamA = document.getElementById('add-fixture-teama').value;
+        const teamB = document.getElementById('add-fixture-teamb').value;
+        const time = document.getElementById('add-fixture-time').value.trim();
+        if (!time) { showToast('Please enter a match time', 'error'); return; }
+        if (teamA === teamB) { showToast('Teams must be different', 'error'); return; }
+        const newId = tournamentData.matches.length > 0 ? Math.max(...tournamentData.matches.map(m => m.id)) + 1 : 1;
+        tournamentData.matches.push({ id: newId, pool: pk, teamA, teamB, scoreA: null, scoreB: null, status: 'upcoming', time });
+        saveData(); renderAll(); renderAdminContent();
+        showToast('Fixture added');
+    }
+
+    function deleteFixture(id) {
+        showConfirm('Delete Fixture', 'Remove this fixture permanently?', () => {
+            tournamentData.matches = tournamentData.matches.filter(m => m.id !== id);
+            saveData(); renderAll(); renderAdminContent();
+            showToast('Fixture deleted');
+        });
+    }
+
+    let adminResultFilter = 'all';
+
+    function renderAdminResults() {
+        const filterPk = adminResultFilter;
+        const matches = filterPk === 'all' ? tournamentData.matches : tournamentData.matches.filter(m => m.pool === filterPk);
+        let filterHtml = '<div class="flex gap-2 mb-4 overflow-x-auto pb-2">';
+        filterHtml += `<button onclick="adminResultFilter='all';renderAdminContent()" class="admin-btn ${filterPk === 'all' ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">All</button>`;
+        for (const pk of ['A','B','C','D']) {
+            filterHtml += `<button onclick="adminResultFilter='${pk}';renderAdminContent()" class="admin-btn ${filterPk === pk ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">Pool ${pk}</button>`;
+        }
+        filterHtml += '</div>';
+
+        let html = '<div class="space-y-3">';
+        matches.forEach(m => {
+            const c = POOL_COLORS[m.pool];
+            const sA = m.scoreA !== null ? m.scoreA : 0;
+            const sB = m.scoreB !== null ? m.scoreB : 0;
+            html += `<div class="bg-gray-900 rounded-lg border ${c.border} p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">Pool ${m.pool}</span>
+                    <span class="text-xs text-gray-400">#${m.id} &middot; ${m.time}</span>
+                </div>
+                <div class="flex items-center justify-center gap-3 mb-3">
+                    <span class="font-semibold text-white text-sm">${m.teamA}</span>
+                    <input type="number" min="0" value="${sA}" id="score-a-${m.id}" class="admin-input w-16 text-center text-lg font-bold">
+                    <span class="text-gray-400 font-bold">-</span>
+                    <input type="number" min="0" value="${sB}" id="score-b-${m.id}" class="admin-input w-16 text-center text-lg font-bold">
+                    <span class="font-semibold text-white text-sm">${m.teamB}</span>
+                </div>
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex gap-2">
+                        <button onclick="setMatchStatus(${m.id},'upcoming')" class="text-xs px-2 py-1 rounded ${m.status === 'upcoming' ? 'status-upcoming' : 'bg-gray-800 text-gray-500'} cursor-pointer">Upcoming</button>
+                        <button onclick="setMatchStatus(${m.id},'live')" class="text-xs px-2 py-1 rounded ${m.status === 'live' ? 'status-live' : 'bg-gray-800 text-gray-500'} cursor-pointer">Live</button>
+                        <button onclick="setMatchStatus(${m.id},'completed')" class="text-xs px-2 py-1 rounded ${m.status === 'completed' ? 'status-completed' : 'bg-gray-800 text-gray-500'} cursor-pointer">FT</button>
+                    </div>
+                    <button onclick="saveMatchResult(${m.id})" class="admin-btn admin-btn-green text-xs py-1 px-3"><i class="fas fa-save mr-1"></i>Save</button>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        return filterHtml + html;
+    }
+
+    function saveMatchResult(id) {
+        const match = tournamentData.matches.find(m => m.id === id);
+        if (!match) return;
+        match.scoreA = parseInt(document.getElementById('score-a-' + id).value) || 0;
+        match.scoreB = parseInt(document.getElementById('score-b-' + id).value) || 0;
+        saveData(); renderAll();
+        showToast('Match result saved');
+    }
+
+    function setMatchStatus(id, status) {
+        const match = tournamentData.matches.find(m => m.id === id);
+        if (!match) return;
+        match.status = status;
+        if (status === 'completed') {
+            match.scoreA = parseInt(document.getElementById('score-a-' + id).value) || 0;
+            match.scoreB = parseInt(document.getElementById('score-b-' + id).value) || 0;
+        }
+        saveData(); renderAll(); renderAdminContent();
+        showToast('Status updated to ' + (status === 'completed' ? 'Full Time' : status.charAt(0).toUpperCase() + status.slice(1)));
+    }
+
+    function renderAdminStandings() {
+        let html = '<p class="text-gray-400 text-sm mb-4">Standings are auto-calculated from match results. Use adjustments below for point deductions or bonuses (e.g., forfeit penalties).</p>';
+        for (const pk of ['A','B','C','D']) {
+            const c = POOL_COLORS[pk];
+            const standings = calculateStandings(pk);
+            html += `<div class="mb-6">
+                <h3 class="text-lg font-bold mb-3 ${c.text}"><i class="fas fa-layer-group mr-2"></i>${tournamentData.pools[pk].name}</h3>
+                <div class="overflow-x-auto"><table class="w-full text-sm">
+                    <thead class="bg-gray-800"><tr>
+                        <th class="px-3 py-2 text-left text-gray-400">#</th>
+                        <th class="px-3 py-2 text-left text-gray-400">Team</th>
+                        <th class="px-3 py-2 text-center text-gray-400">P</th>
+                        <th class="px-3 py-2 text-center text-gray-400">W</th>
+                        <th class="px-3 py-2 text-center text-gray-400">D</th>
+                        <th class="px-3 py-2 text-center text-gray-400">L</th>
+                        <th class="px-3 py-2 text-center text-gray-400">GD</th>
+                        <th class="px-3 py-2 text-center text-gray-400">Pts</th>
+                        <th class="px-3 py-2 text-center text-gray-400">Adj</th>
+                        <th class="px-3 py-2 text-left text-gray-400">Note</th>
+                    </tr></thead><tbody>`;
+            standings.forEach((s, i) => {
+                html += `<tr class="border-b border-gray-800 ${i === 0 ? c.bg : ''}">
+                    <td class="px-3 py-2 text-white">${i + 1}</td>
+                    <td class="px-3 py-2 font-semibold text-white">${s.name}</td>
+                    <td class="px-3 py-2 text-center text-gray-300">${s.played}</td>
+                    <td class="px-3 py-2 text-center text-gray-300">${s.won}</td>
+                    <td class="px-3 py-2 text-center text-gray-300">${s.drawn}</td>
+                    <td class="px-3 py-2 text-center text-gray-300">${s.lost}</td>
+                    <td class="px-3 py-2 text-center text-gray-300">${s.gd > 0 ? '+' + s.gd : s.gd}</td>
+                    <td class="px-3 py-2 text-center font-bold ${c.text}">${s.pts}</td>
+                    <td class="px-3 py-2"><input type="number" value="${s.adj}" id="adj-${pk}-${i}" class="admin-input w-14 text-center text-xs py-1 px-1"></td>
+                    <td class="px-3 py-2"><input type="text" value="${s.note}" id="note-${pk}-${i}" class="admin-input text-xs py-1 px-2 w-24" placeholder="-"></td>
+                </tr>`;
+            });
+            html += '</tbody></table></div></div>';
+        }
+        html += '<button onclick="saveAdjustments()" class="admin-btn admin-btn-green w-full mt-2"><i class="fas fa-save mr-2"></i>Save Adjustments</button>';
+        return html;
+    }
+
+    function saveAdjustments() {
+        tournamentData.adjustments = {};
+        for (const pk of ['A','B','C','D']) {
+            const standings = calculateStandings(pk);
+            standings.forEach((s, i) => {
+                const adjEl = document.getElementById('adj-' + pk + '-' + i);
+                const noteEl = document.getElementById('note-' + pk + '-' + i);
+                if (adjEl && noteEl) {
+                    const adj = parseInt(adjEl.value) || 0;
+                    const note = noteEl.value.trim();
+                    if (adj !== 0 || note) {
+                        tournamentData.adjustments[s.name] = { pointsAdj: adj, note };
+                    }
+                }
+            });
+        }
+        saveData(); renderAll(); renderAdminContent();
+        showToast('Adjustments saved');
+    }
+
+    // ===== IMGBB UPLOAD =====
+    function uploadToImgBB(file, callback) {
+        const apiKey = tournamentData.settings?.imgbbApiKey;
+        if (!apiKey) {
+            showToast('Set your ImgBB API key in Settings first', 'error');
+            if (adminTab !== 'settings') switchAdminTab('settings');
+            return;
+        }
+        showToast('Uploading image...');
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64 = e.target.result.split(',')[1];
+            const body = new URLSearchParams();
+            body.append('key', apiKey);
+            body.append('image', base64);
+            fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: body })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) { callback(data.data.url); showToast('Image uploaded!'); }
+                    else { showToast('Upload failed: ' + (data.error?.message || 'Check API key'), 'error'); }
+                })
+                .catch(err => { showToast('Upload error: ' + err.message, 'error'); });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function uploadTeamLogo(pk, idx) {
+        document.getElementById('logo-input-' + pk + '-' + idx).click();
+    }
+
+    function handleTeamLogoUpload(pk, idx, input) {
+        const file = input.files[0];
+        if (!file) return;
+        uploadToImgBB(file, function(url) {
+            const teamName = tournamentData.pools[pk].teams[idx];
+            tournamentData.logos[teamName] = url;
+            saveData(); renderAll(); renderAdminContent();
+        });
+    }
+
+    // ===== GALLERY ADMIN =====
+    const GALLERY_CATEGORIES = ['Action Shots', 'Trophy Moments', 'Team Photos', 'Match Highlights', 'Awards Ceremony', 'Community Spirit'];
+
+    function renderAdminGallery() {
+        const images = tournamentData.images?.gallery || [];
+        let html = `<div class="bg-gray-900 rounded-lg border border-gray-700 p-4 mb-6">
+            <h4 class="font-semibold text-white mb-3"><i class="fas fa-cloud-upload-alt mr-2 text-scfc-accent"></i>Upload Image</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <input type="text" id="gallery-caption" class="admin-input" placeholder="Caption (optional)">
+                <select id="gallery-category" class="admin-select">
+                    ${GALLERY_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+                <label class="admin-btn admin-btn-green text-center cursor-pointer">
+                    <i class="fas fa-upload mr-2"></i>Choose Image
+                    <input type="file" id="gallery-upload" accept="image/*" class="hidden" onchange="handleGalleryUpload(this)">
+                </label>
+            </div>
+            <p class="text-gray-500 text-xs mt-2"><i class="fas fa-info-circle mr-1"></i>Images are uploaded to ImgBB. Set your API key in Settings if you haven't already.</p>
+        </div>`;
+
+        if (images.length === 0) {
+            html += '<div class="text-center text-gray-500 py-8"><i class="fas fa-images text-4xl mb-3 block opacity-30"></i><p>No images uploaded yet. Add your first photo above!</p></div>';
+        } else {
+            html += '<div class="grid grid-cols-2 md:grid-cols-3 gap-4">';
+            images.forEach((img, i) => {
+                html += `<div class="relative group rounded-lg overflow-hidden border border-gray-700">
+                    <img src="${img.url}" alt="${img.caption || 'Gallery image'}" class="w-full h-40 object-cover">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                        <p class="text-white text-sm font-semibold">${img.caption || 'Untitled'}</p>
+                        <p class="text-gray-400 text-xs">${img.category}</p>
+                        <button onclick="deleteGalleryImage(${i})" class="mt-2 admin-btn admin-btn-red text-xs py-1 px-3"><i class="fas fa-trash mr-1"></i>Delete</button>
+                    </div>
+                    <span class="absolute top-2 left-2 bg-black/70 text-xs px-2 py-1 rounded text-gray-300">${img.category}</span>
+                </div>`;
+            });
+            html += '</div>';
+        }
+        return html;
+    }
+
+    function handleGalleryUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const caption = document.getElementById('gallery-caption').value.trim();
+        const category = document.getElementById('gallery-category').value;
+        uploadToImgBB(file, function(url) {
+            if (!tournamentData.images) tournamentData.images = { gallery: [] };
+            if (!tournamentData.images.gallery) tournamentData.images.gallery = [];
+            tournamentData.images.gallery.push({ url, caption, category, uploadedAt: new Date().toISOString().split('T')[0] });
+            saveData(); renderAdminContent();
+        });
+        input.value = '';
+    }
+
+    function deleteGalleryImage(idx) {
+        showConfirm('Delete Image', 'Remove this image from the gallery?', () => {
+            tournamentData.images.gallery.splice(idx, 1);
+            saveData(); renderAdminContent();
+            showToast('Image deleted');
+        });
+    }
+
+    // ===== SETTINGS ADMIN =====
+    function renderAdminSettings() {
+        const apiKey = tournamentData.settings?.imgbbApiKey || '';
+        let html = `<div class="bg-gray-900 rounded-lg border border-gray-700 p-6 mb-6">
+            <h4 class="font-semibold text-white mb-4"><i class="fas fa-key mr-2 text-scfc-accent"></i>ImgBB API Key</h4>
+            <p class="text-gray-400 text-sm mb-4">To upload images, you need a free API key from <a href="https://api.imgbb.com/" target="_blank" rel="noopener noreferrer" class="text-scfc-accent hover:underline">imgbb.com</a>. Sign up for free, get your key, and paste it below.</p>
+            <div class="flex gap-3">
+                <input type="text" id="imgbb-api-key" value="${apiKey}" class="admin-input flex-1" placeholder="Paste your ImgBB API key here">
+                <button onclick="saveImgBBKey()" class="admin-btn admin-btn-green"><i class="fas fa-save mr-1"></i>Save</button>
+            </div>
+        </div>`;
+
+        html += `<div class="bg-gray-900 rounded-lg border border-gray-700 p-6">
+            <h4 class="font-semibold text-white mb-4"><i class="fas fa-info-circle mr-2 text-blue-400"></i>Data Summary</h4>
+            <div class="space-y-2 text-sm">
+                <p class="text-gray-400">Pools: <span class="text-white font-semibold">${Object.keys(tournamentData.pools).length}</span></p>
+                <p class="text-gray-400">Total Teams: <span class="text-white font-semibold">${Object.values(tournamentData.pools).reduce((a, p) => a + p.teams.length, 0)}</span></p>
+                <p class="text-gray-400">Total Fixtures: <span class="text-white font-semibold">${tournamentData.matches.length}</span></p>
+                <p class="text-gray-400">Completed: <span class="text-white font-semibold">${tournamentData.matches.filter(m => m.status === 'completed').length}</span></p>
+                <p class="text-gray-400">Gallery Images: <span class="text-white font-semibold">${(tournamentData.images?.gallery || []).length}</span></p>
+                <p class="text-gray-400">Team Logos: <span class="text-white font-semibold">${Object.keys(tournamentData.logos || {}).length}</span></p>
+                <p class="text-gray-400">ImgBB Key: <span class="text-white font-semibold">${apiKey ? 'Set ✓' : 'Not set ✗'}</span></p>
+            </div>
+        </div>`;
+
+        return html;
+    }
+
+    function saveImgBBKey() {
+        const key = document.getElementById('imgbb-api-key').value.trim();
+        if (!tournamentData.settings) tournamentData.settings = {};
+        tournamentData.settings.imgbbApiKey = key;
+        saveData();
+        showToast(key ? 'API key saved!' : 'API key cleared');
+    }
+
+    // ===== UI HELPERS =====
+    function showToast(msg, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = 'toast toast-' + type + ' show';
+        setTimeout(() => { toast.className = 'toast toast-' + type; }, 2500);
+    }
+
+    function showConfirm(title, message, onConfirm) {
+        const dialog = document.getElementById('confirm-dialog');
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-message').textContent = message;
+        dialog.classList.remove('hidden');
+        document.getElementById('confirm-yes').onclick = () => { dialog.classList.add('hidden'); onConfirm(); };
+        document.getElementById('confirm-no').onclick = () => { dialog.classList.add('hidden'); };
+    }
+
+    function confirmReset() {
+        showConfirm('Reset All Data', 'This will delete all changes and restore default data. Continue?', () => {
+            localStorage.removeItem('scfc_tournament');
+            tournamentData = generateDefaultData();
+            saveData(); renderAll(); renderAdminContent();
+            showToast('Data reset to defaults');
+        });
+    }
+
+    // ===== AUTH =====
+    function openAdminModal() {
+        document.getElementById('admin-login-modal').classList.remove('hidden');
+        document.getElementById('admin-login-modal').classList.add('flex');
+    }
+
+    function closeAdminLoginModal() {
+        document.getElementById('admin-login-modal').classList.add('hidden');
+        document.getElementById('admin-login-modal').classList.remove('flex');
+        document.getElementById('admin-password').value = '';
+        document.getElementById('admin-error').classList.add('hidden');
+    }
+
+    function checkAdminPassword() {
+        const password = document.getElementById('admin-password').value;
+        if (password === 'scfc2026') {
+            closeAdminLoginModal();
+            document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('admin-panel').style.display = '';
+            switchAdminTab('teams');
+            updateAddFixtureTeams();
+        } else {
+            document.getElementById('admin-error').classList.remove('hidden');
+        }
+    }
+
+    function closeAdminPanel() {
+        document.getElementById('admin-panel').classList.add('hidden');
+    }
+
+    // ===== COUNTDOWN =====
+    function updateCountdown() {
+        const tournamentDate = new Date('2026-06-27T09:00:00');
+        const now = new Date();
+        const diff = tournamentDate - now;
+        if (diff > 0) {
+            document.getElementById('countdown-days').textContent = Math.floor(diff / (1000*60*60*24)).toString().padStart(2,'0');
+            document.getElementById('countdown-hours').textContent = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)).toString().padStart(2,'0');
+            document.getElementById('countdown-minutes').textContent = Math.floor((diff % (1000*60*60)) / (1000*60)).toString().padStart(2,'0');
+            document.getElementById('countdown-seconds').textContent = Math.floor((diff % (1000*60)) / 1000).toString().padStart(2,'0');
+        } else {
+            ['days','hours','minutes','seconds'].forEach(u => document.getElementById('countdown-' + u).textContent = '00');
+        }
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // ===== MOBILE MENU =====
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+
+    // ===== TAB SWITCHING =====
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById('content-' + tabName).classList.remove('hidden');
+        document.querySelectorAll('[id^="tab-"]').forEach(el => { el.classList.remove('tab-active'); el.classList.add('tab-inactive'); });
+        document.getElementById('tab-' + tabName).classList.remove('tab-inactive');
+        document.getElementById('tab-' + tabName).classList.add('tab-active');
+    }
+
+    // ===== SCROLL REVEAL =====
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    function observeReveals() {
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
+    }
+
+    // ===== INIT =====
+    tournamentData = loadData();
+    renderAll();
+    observeReveals();
+
+    // Hash-based admin access
+    if (window.location.hash === '#admin') { openAdminModal(); }
     </script>
 </body>
 </html>
