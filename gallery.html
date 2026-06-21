@@ -252,11 +252,17 @@
             }
         }
 
-        // Gallery - Load images from localStorage
-        function renderGallery() {
+        // Gallery - Load images from Supabase
+        async function renderGallery() {
             try {
-                const data = JSON.parse(localStorage.getItem('scfc_tournament'));
-                const images = data?.images?.gallery || [];
+                const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+                const supabaseClient = createClient(
+                    'https://xtupurjemnxohwmttbdo.supabase.co',
+                    'sb_publishable_URW-N7i4N8sssj9uHikrMQ_OEHAwvCv'
+                );
+                const { data: row, error } = await supabaseClient.from('tournament_state').select('data').eq('id', 1).single();
+                if (error) throw error;
+                const images = row?.data?.images?.gallery || [];
                 const emptyEl = document.getElementById('gallery-empty');
                 const gridEl = document.getElementById('gallery-grid');
                 const placeholdersEl = document.getElementById('gallery-placeholders');
@@ -280,6 +286,7 @@
                         </div>`;
                     });
                     document.getElementById('gallery-images').innerHTML = html;
+                    document.querySelectorAll('#gallery-images .reveal').forEach(el => observer.observe(el));
                 }
             } catch(e) {
                 document.getElementById('gallery-empty').classList.remove('hidden');

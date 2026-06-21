@@ -44,6 +44,18 @@
         .toast-success { background: #1B5E20; color: #fff; border: 1px solid #4CAF50; }
         .toast-error { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
         .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9998; display: flex; align-items: center; justify-content: center; }
+        .bracket-wrap { position: relative; }
+        .bracket-lines { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+        .bracket-lines path { fill: none; stroke: #2E7D32; stroke-width: 2; }
+        .bracket { display: flex; align-items: stretch; overflow-x: auto; padding: 10px 10px 30px; position: relative; }
+        .bracket-round { position: relative; z-index: 1; display: flex; flex-direction: column; min-width: 230px; padding: 0 24px; flex-shrink: 0; }
+        .bracket-round-title { text-align: center; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 12px; }
+        .bracket-round-matches { display: flex; flex-direction: column; justify-content: space-around; flex: 1; }
+        .bracket-match-slot { position: relative; padding: 8px 0; }
+        .bracket-match { background: #0D1B0D; border: 1px solid rgba(76,175,80,0.3); border-radius: 10px; padding: 10px 12px; }
+        .bracket-team { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 0.85rem; }
+        .bracket-team.winner { color: #4CAF50; font-weight: 700; }
+        .bracket-team.tbd { color: #6b7280; font-style: italic; }
     </style>
 </head>
 <body class="bg-gray-900 text-white page-transition">
@@ -130,8 +142,8 @@
                 <button onclick="switchTab('fixtures')" id="tab-fixtures" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
                     <i class="fas fa-calendar mr-2"></i>Fixtures
                 </button>
-                <button onclick="switchTab('standings')" id="tab-standings" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
-                    <i class="fas fa-table mr-2"></i>Standings
+                <button onclick="switchTab('bracket')" id="tab-bracket" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
+                    <i class="fas fa-sitemap mr-2"></i>Knockout
                 </button>
                 <button onclick="switchTab('results')" id="tab-results" class="tab-inactive flex-1 py-4 px-6 text-center font-semibold whitespace-nowrap transition-colors rounded-t-lg">
                     <i class="fas fa-check-circle mr-2"></i>Results
@@ -178,8 +190,8 @@
             <!-- Fixtures Tab -->
             <div id="content-fixtures" class="tab-content hidden"></div>
 
-            <!-- Standings Tab -->
-            <div id="content-standings" class="tab-content hidden"></div>
+            <!-- Bracket Tab -->
+            <div id="content-bracket" class="tab-content hidden"></div>
 
             <!-- Results Tab -->
             <div id="content-results" class="tab-content hidden"></div>
@@ -200,9 +212,8 @@
             <!-- Admin Tabs -->
             <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
                 <button onclick="switchAdminTab('teams')" id="admin-tab-teams" class="admin-btn admin-btn-green whitespace-nowrap"><i class="fas fa-shield-alt mr-1"></i>Teams</button>
-                <button onclick="switchAdminTab('fixtures')" id="admin-tab-fixtures" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-calendar mr-1"></i>Fixtures</button>
+                <button onclick="switchAdminTab('bracket')" id="admin-tab-bracket" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-sitemap mr-1"></i>Bracket Setup</button>
                 <button onclick="switchAdminTab('results')" id="admin-tab-results" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-futbol mr-1"></i>Results</button>
-                <button onclick="switchAdminTab('standings')" id="admin-tab-standings" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-table mr-1"></i>Standings</button>
                 <button onclick="switchAdminTab('gallery')" id="admin-tab-gallery" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-images mr-1"></i>Gallery</button>
                 <button onclick="switchAdminTab('settings')" id="admin-tab-settings" class="admin-btn admin-btn-gray whitespace-nowrap"><i class="fas fa-key mr-1"></i>Settings</button>
             </div>
@@ -286,111 +297,150 @@
 
     <script>
     // ===== DATA LAYER =====
-    const POOL_COLORS = {
-        A: { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400', header: 'from-scfc-green to-scfc-light', badge: 'bg-green-500/20 text-green-400 border-green-500/30', hex: '#16a34a', hexLight: '#22c55e' },
-        B: { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400', header: 'from-blue-600 to-blue-500', badge: 'bg-blue-500/20 text-blue-400 border-blue-500/30', hex: '#2563eb', hexLight: '#3b82f6' },
-        C: { bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-400', header: 'from-orange-500 to-orange-400', badge: 'bg-orange-500/20 text-orange-400 border-orange-500/30', hex: '#ea580c', hexLight: '#f97316' },
-        D: { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400', header: 'from-purple-600 to-purple-500', badge: 'bg-purple-500/20 text-purple-400 border-purple-500/30', hex: '#9333ea', hexLight: '#a855f7' }
-    };
-
-    const POOL_LETTERS = { A: 'A', B: 'B', C: 'C', D: 'D' };
+    const DATA_VERSION = 4;
+    const ROUND_SIZES = [8, 4, 2, 1];
+    const ROUND_META = [
+        { name: 'Knockout Stage', border: 'border-scfc-green/30', badge: 'bg-scfc-green/20 text-scfc-accent border-scfc-green/30', text: 'text-scfc-accent' },
+        { name: 'Quarterfinals', border: 'border-blue-500/30', badge: 'bg-blue-500/20 text-blue-400 border-blue-500/30', text: 'text-blue-400' },
+        { name: 'Semifinals', border: 'border-purple-500/30', badge: 'bg-purple-500/20 text-purple-400 border-purple-500/30', text: 'text-purple-400' },
+        { name: 'Final', border: 'border-yellow-500/30', badge: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', text: 'text-yellow-400' }
+    ];
 
     function generateDefaultData() {
-        const pools = {
-            A: { name: 'Pool A', teams: ['Team A1', 'Team A2', 'Team A3', 'Team A4'] },
-            B: { name: 'Pool B', teams: ['Team B1', 'Team B2', 'Team B3', 'Team B4'] },
-            C: { name: 'Pool C', teams: ['Team C1', 'Team C2', 'Team C3', 'Team C4'] },
-            D: { name: 'Pool D', teams: ['Team D1', 'Team D2', 'Team D3', 'Team D4'] }
-        };
-        const times = {
-            A: ['10:00 AM','10:30 AM','11:00 AM','2:00 PM','2:30 PM','3:00 PM'],
-            B: ['10:15 AM','10:45 AM','11:15 AM','2:15 PM','2:45 PM','3:15 PM'],
-            C: ['10:30 AM','11:00 AM','11:30 AM','3:30 PM','4:00 PM','4:30 PM'],
-            D: ['10:45 AM','11:15 AM','11:45 AM','3:45 PM','4:15 PM','4:45 PM']
-        };
+        const teams = [
+            "St. Catherine Red", "St. Catherine Blue", "St. Catherine Yellow", "St. James's Vaniyakudi",
+            "St. Lucia Erayumanthurai", "SEC Marthandanthurai", "St. Nicholas Neerodi", "Udaya Paruthiyoor",
+            "SBFA Poovar", "Swapna Kochuthurai", "Kalasagar Pulluvila", "Jai Christ Adimalathura",
+            "St. Mary's Vizhinjam", "PSA Poonthura", "Kawin Turf Nagercoil", "Turf 45 Trichy"
+        ];
         const matches = [];
         let id = 1;
-        for (const pk of ['A','B','C','D']) {
-            const t = pools[pk].teams;
-            let ti = 0;
-            for (let i = 0; i < t.length; i++) {
-                for (let j = i + 1; j < t.length; j++) {
-                    matches.push({ id: id++, pool: pk, teamA: t[i], teamB: t[j], scoreA: null, scoreB: null, status: 'upcoming', time: times[pk][ti++] });
-                }
+        for (let r = 0; r < ROUND_SIZES.length; r++) {
+            for (let i = 0; i < ROUND_SIZES[r]; i++) {
+                matches.push({
+                    id: id++, round: r, indexInRound: i,
+                    teamA: null, teamB: null,
+                    scoreA: null, scoreB: null, winner: null,
+                    scorersA: [], scorersB: [], penA: null, penB: null,
+                    status: 'upcoming', time: ''
+                });
             }
         }
-        return { version: 1, pools, matches, adjustments: {}, images: { gallery: [] }, logos: {}, settings: { imgbbApiKey: '' } };
+        return { version: DATA_VERSION, teams, matches, logos: {}, images: { gallery: [] }, settings: { imgbbApiKey: '' } };
     }
 
     let tournamentData;
 
-    function loadData() {
-        const stored = localStorage.getItem('scfc_tournament');
-        if (stored) {
-            try {
-                const data = JSON.parse(stored);
-                if (!data.images) data.images = { gallery: [] };
-                if (!data.logos) data.logos = {};
-                if (!data.settings) data.settings = { imgbbApiKey: '' };
-                return data;
-            } catch(e) {}
+    // ===== SUPABASE =====
+    const SUPABASE_URL = 'https://xtupurjemnxohwmttbdo.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_URW-N7i4N8sssj9uHikrMQ_OEHAwvCv';
+    let supabaseClient;
+
+    async function initSupabase() {
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+        supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    function applyRow(row) {
+        if (row && row.version === DATA_VERSION && Array.isArray(row.teams) && Array.isArray(row.matches)) {
+            if (!row.images) row.images = { gallery: [] };
+            if (!row.logos) row.logos = {};
+            if (!row.settings) row.settings = { imgbbApiKey: '' };
+            tournamentData = row;
+            return;
         }
-        const data = generateDefaultData();
-        localStorage.setItem('scfc_tournament', JSON.stringify(data));
-        return data;
+        const fresh = generateDefaultData();
+        if (row?.images) fresh.images = row.images;
+        if (row?.logos) fresh.logos = row.logos;
+        if (row?.settings) fresh.settings = row.settings;
+        tournamentData = fresh;
+        saveData();
+    }
+
+    async function loadData() {
+        const { data, error } = await supabaseClient.from('tournament_state').select('data').eq('id', 1).single();
+        if (error) {
+            showToast('Could not load tournament data: ' + error.message, 'error');
+            tournamentData = generateDefaultData();
+            return;
+        }
+        applyRow(data?.data);
+    }
+
+    function subscribeToChanges() {
+        supabaseClient
+            .channel('tournament_state_changes')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'tournament_state', filter: 'id=eq.1' }, (payload) => {
+                applyRow(payload.new.data);
+                renderAll();
+            })
+            .subscribe();
     }
 
     function saveData() {
-        localStorage.setItem('scfc_tournament', JSON.stringify(tournamentData));
+        supabaseClient.from('tournament_state').update({ data: tournamentData }).eq('id', 1)
+            .then(({ error }) => { if (error) showToast('Sync failed: ' + error.message, 'error'); });
     }
 
-    // ===== STANDINGS CALCULATION =====
-    function calculateStandings(poolKey) {
-        const teams = tournamentData.pools[poolKey].teams;
-        const completed = tournamentData.matches.filter(m => m.pool === poolKey && m.status === 'completed');
-        const standings = teams.map(name => ({ name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, pts: 0 }));
-        for (const m of completed) {
-            const h = standings.find(s => s.name === m.teamA);
-            const a = standings.find(s => s.name === m.teamB);
-            if (!h || !a) continue;
-            h.played++; a.played++;
-            h.gf += m.scoreA; h.ga += m.scoreB;
-            a.gf += m.scoreB; a.ga += m.scoreA;
-            if (m.scoreA > m.scoreB) { h.won++; a.lost++; h.pts += 3; }
-            else if (m.scoreA < m.scoreB) { a.won++; h.lost++; a.pts += 3; }
-            else { h.drawn++; a.drawn++; h.pts++; a.pts++; }
+    // ===== BRACKET HELPERS =====
+    function getMatch(round, indexInRound) {
+        return tournamentData.matches.find(m => m.round === round && m.indexInRound === indexInRound);
+    }
+
+    function getNextMatch(match) {
+        if (match.round >= ROUND_SIZES.length - 1) return null;
+        return getMatch(match.round + 1, Math.floor(match.indexInRound / 2));
+    }
+
+    function isTeamASlot(match) {
+        return match.indexInRound % 2 === 0;
+    }
+
+    function advanceWinner(match) {
+        const next = getNextMatch(match);
+        if (!next || !match.winner) return;
+        if (next.status === 'completed') {
+            showToast('Next round already has a result — please double-check it', 'error');
         }
-        for (const s of standings) {
-            s.gd = s.gf - s.ga;
-            const adj = tournamentData.adjustments[s.name];
-            if (adj) { s.pts += (adj.pointsAdj || 0); s.adj = adj.pointsAdj || 0; s.note = adj.note || ''; }
-            else { s.adj = 0; s.note = ''; }
+        if (isTeamASlot(match)) next.teamA = match.winner; else next.teamB = match.winner;
+    }
+
+    function retractWinner(match, previousWinner) {
+        const next = getNextMatch(match);
+        if (!next || !previousWinner) return;
+        if (next.status === 'completed') {
+            showToast('Next round already used this result — please double-check it', 'error');
+            return;
         }
-        standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
-        return standings;
+        if (isTeamASlot(match)) { if (next.teamA === previousWinner) next.teamA = null; }
+        else { if (next.teamB === previousWinner) next.teamB = null; }
     }
 
     // ===== RENDERING =====
     function renderAll() {
         renderLive();
         renderFixtures();
-        renderStandings();
+        renderBracket();
         renderResults();
         renderTeams();
     }
 
+    function sortByRound(matches) {
+        return matches.slice().sort((a, b) => a.round - b.round || a.indexInRound - b.indexInRound);
+    }
+
     function renderLive() {
-        const live = tournamentData.matches.filter(m => m.status === 'live');
-        const upcoming = tournamentData.matches.filter(m => m.status === 'upcoming').slice(0, 3);
+        const live = sortByRound(tournamentData.matches.filter(m => m.status === 'live'));
+        const upcoming = sortByRound(tournamentData.matches.filter(m => m.status === 'upcoming' && m.teamA && m.teamB)).slice(0, 3);
         let html = '';
         if (live.length > 0) {
             html += '<h2 class="text-2xl font-bold text-white mb-4 neon-text"><i class="fas fa-broadcast-tower mr-2 text-red-400"></i>Live Now</h2>';
             html += '<div class="space-y-4">';
             for (const m of live) {
-                const c = POOL_COLORS[m.pool];
+                const c = ROUND_META[m.round];
                 html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} neon-border">
                     <div class="flex items-center justify-between">
-                        <span class="${c.badge} px-3 py-1 rounded-full text-xs font-semibold border">${m.pool}</span>
+                        <span class="${c.badge} px-3 py-1 rounded-full text-xs font-semibold border">${c.name}</span>
                         <span class="status-live px-3 py-1 rounded-full text-xs font-bold">LIVE</span>
                     </div>
                     <div class="flex items-center justify-center gap-4 mt-4">
@@ -406,10 +456,10 @@
             html += '<h2 class="text-xl font-bold text-white mb-4 mt-8"><i class="fas fa-clock mr-2 text-scfc-accent"></i>Up Next</h2>';
             html += '<div class="space-y-3">';
             for (const m of upcoming) {
-                const c = POOL_COLORS[m.pool];
+                const c = ROUND_META[m.round];
                 html += `<div class="bg-scfc-dark rounded-xl p-4 border ${c.border}">
                     <div class="flex items-center justify-between">
-                        <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">${m.time}</span>
+                        <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">${m.time || c.name}</span>
                         <div class="flex items-center gap-4">
                             <span class="font-semibold text-white">${m.teamA}</span>
                             <span class="text-sm gradient-text">vs</span>
@@ -424,7 +474,7 @@
     }
 
     function renderFixtures() {
-        const matches = tournamentData.matches.filter(m => m.status === 'upcoming' || m.status === 'live');
+        const matches = sortByRound(tournamentData.matches.filter(m => m.teamA && m.teamB && m.status !== 'completed'));
         if (matches.length === 0) {
             document.getElementById('content-fixtures').innerHTML = `<div class="bg-scfc-dark rounded-3xl p-8 border border-scfc-green/30 neon-border shadow-2xl text-center reveal">
                 <div class="text-6xl mb-6 spin-slow inline-block">⚽</div>
@@ -433,75 +483,80 @@
             return;
         }
         let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Upcoming Matches</h2><div class="space-y-4">';
-        const poolOrder = ['A','B','C','D'];
-        for (const pk of poolOrder) {
-            const pm = matches.filter(m => m.pool === pk);
-            if (pm.length === 0) continue;
-            const c = POOL_COLORS[pk];
-            for (const m of pm) {
-                const statusBadge = m.status === 'live'
-                    ? '<span class="status-live px-2 py-1 rounded-full text-xs font-bold">LIVE</span>'
-                    : '';
-                html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} card-hover neon-border reveal">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div class="text-center md:text-left">
-                            <span class="${c.badge} px-3 py-1 rounded-full text-sm font-semibold border">${m.time}</span>
-                            ${statusBadge}
-                        </div>
-                        <div class="flex items-center gap-6">
-                            <div class="text-right"><p class="font-bold text-white">${m.teamA}</p><span class="text-xs text-gray-400">${c.text === 'text-green-400' ? 'Pool ' + pk : 'Pool ' + pk}</span></div>
-                            <span class="text-2xl font-bold gradient-text">VS</span>
-                            <div class="text-left"><p class="font-bold text-white">${m.teamB}</p><span class="text-xs text-gray-400">Pool ${pk}</span></div>
-                        </div>
+        for (const m of matches) {
+            const c = ROUND_META[m.round];
+            const statusBadge = m.status === 'live'
+                ? '<span class="status-live px-2 py-1 rounded-full text-xs font-bold">LIVE</span>'
+                : '';
+            html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} card-hover neon-border reveal">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="text-center md:text-left">
+                        <span class="${c.badge} px-3 py-1 rounded-full text-sm font-semibold border">${m.time || 'TBA'}</span>
+                        ${statusBadge}
                     </div>
-                </div>`;
-            }
+                    <div class="flex items-center gap-6">
+                        <div class="text-right"><p class="font-bold text-white">${m.teamA}</p><span class="text-xs text-gray-400">${c.name}</span></div>
+                        <span class="text-2xl font-bold gradient-text">VS</span>
+                        <div class="text-left"><p class="font-bold text-white">${m.teamB}</p><span class="text-xs text-gray-400">${c.name}</span></div>
+                    </div>
+                </div>
+            </div>`;
         }
         html += '</div>';
         document.getElementById('content-fixtures').innerHTML = html;
     }
 
-    function renderStandings() {
-        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Pool Standings</h2>';
-        for (const pk of ['A','B','C','D']) {
-            const c = POOL_COLORS[pk];
-            const standings = calculateStandings(pk);
-            html += `<div class="bg-scfc-dark rounded-2xl border ${c.border} mb-6 overflow-hidden reveal">
-                <div class="bg-gradient-to-r ${c.header} px-6 py-3">
-                    <h3 class="font-bold text-lg text-white"><i class="fas fa-layer-group mr-2"></i>${tournamentData.pools[pk].name}</h3>
-                </div>
-                <div class="overflow-x-auto"><table class="w-full">
-                    <thead class="bg-gray-800"><tr>
-                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">#</th>
-                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">Team</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">P</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">W</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">D</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">L</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">GD</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-400">Pts</th>
-                    </tr></thead><tbody>`;
-            standings.forEach((s, i) => {
-                const rowBg = i === 0 ? c.bg + ' ' + c.border.replace('border-','hover:bg-').replace('/30','/20') : 'hover:bg-gray-800/50';
-                const ptsClass = i === 0 ? 'font-bold gradient-text' : 'font-bold ' + c.text;
-                html += `<tr class="border-b border-gray-800 ${rowBg} transition">
-                    <td class="px-4 py-3 font-bold text-white">${i + 1}</td>
-                    <td class="px-4 py-3 font-semibold text-white">${s.name}</td>
-                    <td class="px-4 py-3 text-center text-gray-300">${s.played}</td>
-                    <td class="px-4 py-3 text-center text-gray-300">${s.won}</td>
-                    <td class="px-4 py-3 text-center text-gray-300">${s.drawn}</td>
-                    <td class="px-4 py-3 text-center text-gray-300">${s.lost}</td>
-                    <td class="px-4 py-3 text-center text-gray-300">${s.gd > 0 ? '+' + s.gd : s.gd}</td>
-                    <td class="px-4 py-3 text-center ${ptsClass}">${s.pts}</td>
-                </tr>`;
-            });
-            html += '</tbody></table></div></div>';
+    function renderBracket() {
+        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Tournament Knockout</h2>';
+        html += '<div class="bracket-wrap"><svg class="bracket-lines"></svg><div class="bracket" id="bracket-rounds">';
+        for (let r = 0; r < ROUND_SIZES.length; r++) {
+            const c = ROUND_META[r];
+            const matches = sortByRound(tournamentData.matches.filter(m => m.round === r));
+            html += `<div class="bracket-round"><div class="bracket-round-title ${c.text}">${c.name}</div><div class="bracket-round-matches">`;
+            for (const m of matches) {
+                const penAText = m.penA !== null ? ` <span class="text-gray-500">(${m.penA})</span>` : '';
+                const penBText = m.penB !== null ? ` <span class="text-gray-500">(${m.penB})</span>` : '';
+                const teamARow = `<div class="bracket-team ${m.winner === m.teamA ? 'winner' : ''} ${!m.teamA ? 'tbd' : ''}"><span>${m.teamA || 'TBD'}</span>${m.status === 'completed' ? `<span>${m.scoreA}${penAText}</span>` : ''}</div>`;
+                const teamBRow = `<div class="bracket-team ${m.winner === m.teamB ? 'winner' : ''} ${!m.teamB ? 'tbd' : ''}"><span>${m.teamB || 'TBD'}</span>${m.status === 'completed' ? `<span>${m.scoreB}${penBText}</span>` : ''}</div>`;
+                html += `<div class="bracket-match-slot" data-match-id="${m.id}"><div class="bracket-match ${c.border}">${teamARow}${teamBRow}</div></div>`;
+            }
+            html += '</div></div>';
         }
-        document.getElementById('content-standings').innerHTML = html;
+        html += '</div></div>';
+        document.getElementById('content-bracket').innerHTML = html;
+        drawBracketLines();
     }
 
+    function drawBracketLines() {
+        const bracket = document.getElementById('bracket-rounds');
+        const svg = document.querySelector('.bracket-lines');
+        if (!bracket || !svg || bracket.offsetParent === null) return;
+        const bracketRect = bracket.getBoundingClientRect();
+        svg.setAttribute('width', bracket.scrollWidth);
+        svg.setAttribute('height', bracket.scrollHeight);
+        let paths = '';
+        for (const m of tournamentData.matches) {
+            const next = getNextMatch(m);
+            if (!next) continue;
+            const fromEl = bracket.querySelector('[data-match-id="' + m.id + '"]');
+            const toEl = bracket.querySelector('[data-match-id="' + next.id + '"]');
+            if (!fromEl || !toEl) continue;
+            const fromRect = fromEl.getBoundingClientRect();
+            const toRect = toEl.getBoundingClientRect();
+            const x1 = fromRect.right - bracketRect.left + bracket.scrollLeft;
+            const y1 = fromRect.top + fromRect.height / 2 - bracketRect.top + bracket.scrollTop;
+            const x2 = toRect.left - bracketRect.left + bracket.scrollLeft;
+            const y2 = toRect.top + toRect.height / 2 - bracketRect.top + bracket.scrollTop;
+            const xm = x1 + (x2 - x1) / 2;
+            paths += `<path d="M${x1},${y1} H${xm} V${y2} H${x2}" />`;
+        }
+        svg.innerHTML = paths;
+    }
+
+    window.addEventListener('resize', () => drawBracketLines());
+
     function renderResults() {
-        const completed = tournamentData.matches.filter(m => m.status === 'completed');
+        const completed = sortByRound(tournamentData.matches.filter(m => m.status === 'completed'));
         if (completed.length === 0) {
             document.getElementById('content-results').innerHTML = `<div class="bg-scfc-dark rounded-3xl p-8 md:p-12 border border-scfc-green/30 neon-border shadow-2xl text-center reveal">
                 <div class="text-6xl mb-6 spin-slow inline-block">⚽</div>
@@ -511,19 +566,24 @@
         }
         let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Match Results</h2><div class="space-y-4">';
         for (const m of completed) {
-            const c = POOL_COLORS[m.pool];
-            const winnerA = m.scoreA > m.scoreB;
-            const winnerB = m.scoreB > m.scoreA;
+            const c = ROUND_META[m.round];
+            const winnerA = m.winner === m.teamA;
+            const winnerB = m.winner === m.teamB;
+            const pensLine = m.penA !== null ? `<p class="text-center text-sm text-gray-400 -mt-1 mb-2">(${m.penA}-${m.penB} on penalties)</p>` : '';
+            const scorerRow = (name, align) => `<div class="flex items-center gap-1 text-xs text-gray-500 mt-1 ${align}"><i class="fas fa-futbol text-[10px]"></i><span>${name}</span></div>`;
+            const scorersALine = (m.scorersA && m.scorersA.length) ? m.scorersA.map(s => scorerRow(s, 'justify-end')).join('') : '';
+            const scorersBLine = (m.scorersB && m.scorersB.length) ? m.scorersB.map(s => scorerRow(s, 'justify-start')).join('') : '';
             html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} reveal">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="${c.badge} px-3 py-1 rounded-full text-xs font-semibold border">Pool ${m.pool}</span>
+                    <span class="${c.badge} px-3 py-1 rounded-full text-xs font-semibold border">${c.name}</span>
                     <span class="status-completed px-3 py-1 rounded-full text-xs font-bold">FT</span>
                 </div>
                 <div class="flex items-center justify-center gap-4">
-                    <div class="text-right flex-1"><p class="font-bold ${winnerA ? 'text-green-400' : 'text-white'}">${m.teamA}</p></div>
+                    <div class="text-right flex-1"><p class="font-bold ${winnerA ? 'text-green-400' : 'text-white'}">${m.teamA}</p>${scorersALine}</div>
                     <div class="text-center px-4"><span class="text-3xl font-bold gradient-text">${m.scoreA} - ${m.scoreB}</span></div>
-                    <div class="text-left flex-1"><p class="font-bold ${winnerB ? 'text-green-400' : 'text-white'}">${m.teamB}</p></div>
+                    <div class="text-left flex-1"><p class="font-bold ${winnerB ? 'text-green-400' : 'text-white'}">${m.teamB}</p>${scorersBLine}</div>
                 </div>
+                ${pensLine}
             </div>`;
         }
         html += '</div>';
@@ -531,29 +591,19 @@
     }
 
     function renderTeams() {
-        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Tournament Teams</h2>';
-        for (const pk of ['A','B','C','D']) {
-            const pool = tournamentData.pools[pk];
-            const c = POOL_COLORS[pk];
-            html += `<div class="mb-8 reveal">
-                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
-                    <span class="bg-gradient-to-r ${c.header} text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3 shadow-lg">${pk}</span>
-                    <span class="${c.text}">${pool.name}</span>
-                </h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">`;
-            pool.teams.forEach((team) => {
-                const initials = team.split(' ').pop().substring(0, 2);
-                const logo = tournamentData.logos[team];
-                const imgHtml = logo
-                    ? `<img src="${logo}" class="w-12 h-12 rounded-full object-cover mx-auto mb-2 shadow-lg" alt="${team}">`
-                    : `<div class="w-12 h-12 bg-gradient-to-r ${c.header} rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold text-white shadow-lg">${initials}</div>`;
-                html += `<div class="bg-gray-900 rounded-xl p-4 border ${c.border} text-center card-hover card-glow">
-                    ${imgHtml}
-                    <p class="font-semibold text-sm text-white">${team}</p>
-                </div>`;
-            });
-            html += '</div></div>';
-        }
+        let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Tournament Teams</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">';
+        tournamentData.teams.forEach((team) => {
+            const initials = team.split(' ').pop().substring(0, 2);
+            const logo = tournamentData.logos[team];
+            const imgHtml = logo
+                ? `<img src="${logo}" class="w-12 h-12 rounded-full object-cover mx-auto mb-2 shadow-lg" alt="${team}">`
+                : `<div class="w-12 h-12 bg-gradient-to-r from-scfc-green to-scfc-light rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold text-white shadow-lg">${initials}</div>`;
+            html += `<div class="bg-gray-900 rounded-xl p-4 border border-scfc-green/30 text-center card-hover card-glow">
+                ${imgHtml}
+                <p class="font-semibold text-sm text-white">${team}</p>
+            </div>`;
+        });
+        html += '</div>';
         document.getElementById('content-teams').innerHTML = html;
     }
 
@@ -570,186 +620,182 @@
     function renderAdminContent() {
         const el = document.getElementById('admin-content');
         if (adminTab === 'teams') el.innerHTML = renderAdminTeams();
-        else if (adminTab === 'fixtures') el.innerHTML = renderAdminFixtures();
+        else if (adminTab === 'bracket') el.innerHTML = renderAdminBracketSetup();
         else if (adminTab === 'results') el.innerHTML = renderAdminResults();
-        else if (adminTab === 'standings') el.innerHTML = renderAdminStandings();
         else if (adminTab === 'gallery') el.innerHTML = renderAdminGallery();
         else if (adminTab === 'settings') el.innerHTML = renderAdminSettings();
     }
 
     function renderAdminTeams() {
-        let html = '';
-        for (const pk of ['A','B','C','D']) {
-            const pool = tournamentData.pools[pk];
-            const c = POOL_COLORS[pk];
-            html += `<div class="mb-6">
-                <h3 class="text-lg font-bold mb-3 ${c.text}"><i class="fas fa-layer-group mr-2"></i>${pool.name}</h3>
-                <div class="bg-gray-900 rounded-lg border ${c.border} divide-y divide-gray-800">`;
-            pool.teams.forEach((team, i) => {
-                const logo = tournamentData.logos[team];
-                const logoHtml = logo ? `<img src="${logo}" class="w-8 h-8 rounded-full object-cover mr-3 border border-gray-700">` : `<div class="w-8 h-8 bg-gradient-to-r ${c.header} rounded-full flex items-center justify-center mr-3 text-xs font-bold text-white">${team.split(' ').pop().substring(0,2)}</div>`;
-                html += `<div class="flex items-center justify-between px-4 py-3" id="team-row-${pk}-${i}">
-                    <div class="flex items-center">${logoHtml}<span class="font-semibold text-white" id="team-name-${pk}-${i}">${team}</span></div>
-                    <div class="flex gap-2">
-                        <button onclick="uploadTeamLogo('${pk}',${i})" class="text-gray-400 hover:text-scfc-accent transition text-sm" title="Upload Logo"><i class="fas fa-camera"></i></button>
-                        <button onclick="startRenameTeam('${pk}',${i})" class="text-gray-400 hover:text-scfc-accent transition text-sm" title="Rename"><i class="fas fa-pen"></i></button>
-                        <button onclick="deleteTeam('${pk}',${i})" class="text-gray-400 hover:text-red-400 transition text-sm" title="Delete"><i class="fas fa-trash"></i></button>
-                    </div>
-                    <input type="file" id="logo-input-${pk}-${i}" accept="image/*" class="hidden" onchange="handleTeamLogoUpload('${pk}',${i},this)">
-                </div>`;
-            });
-            html += `</div>
-                <button onclick="addTeam('${pk}')" class="mt-2 admin-btn admin-btn-green w-full text-sm"><i class="fas fa-plus mr-1"></i>Add Team to ${pool.name}</button>
+        let html = '<div class="bg-gray-900 rounded-lg border border-gray-700 divide-y divide-gray-800">';
+        tournamentData.teams.forEach((team, i) => {
+            const logo = tournamentData.logos[team];
+            const logoHtml = logo ? `<img src="${logo}" class="w-8 h-8 rounded-full object-cover mr-3 border border-gray-700">` : `<div class="w-8 h-8 bg-gradient-to-r from-scfc-green to-scfc-light rounded-full flex items-center justify-center mr-3 text-xs font-bold text-white">${team.split(' ').pop().substring(0,2)}</div>`;
+            html += `<div class="flex items-center justify-between px-4 py-3" id="team-row-${i}">
+                <div class="flex items-center">${logoHtml}<span class="font-semibold text-white" id="team-name-${i}">${team}</span></div>
+                <div class="flex gap-2">
+                    <button onclick="uploadTeamLogo(${i})" class="text-gray-400 hover:text-scfc-accent transition text-sm" title="Upload Logo"><i class="fas fa-camera"></i></button>
+                    <button onclick="startRenameTeam(${i})" class="text-gray-400 hover:text-scfc-accent transition text-sm" title="Rename"><i class="fas fa-pen"></i></button>
+                    <button onclick="deleteTeam(${i})" class="text-gray-400 hover:text-red-400 transition text-sm" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+                <input type="file" id="logo-input-${i}" accept="image/*" class="hidden" onchange="handleTeamLogoUpload(${i},this)">
             </div>`;
-        }
+        });
+        html += '</div>';
+        html += `<button onclick="addTeam()" class="mt-2 admin-btn admin-btn-green w-full text-sm"><i class="fas fa-plus mr-1"></i>Add Team</button>`;
         return html;
     }
 
-    function startRenameTeam(pk, idx) {
-        const oldName = tournamentData.pools[pk].teams[idx];
-        const row = document.getElementById('team-row-' + pk + '-' + idx);
+    function startRenameTeam(idx) {
+        const oldName = tournamentData.teams[idx];
+        const row = document.getElementById('team-row-' + idx);
         row.innerHTML = `<div class="flex items-center gap-2 flex-1">
-            <input type="text" id="rename-input-${pk}-${idx}" value="${oldName}" class="admin-input flex-1">
-            <button onclick="saveRename('${pk}',${idx},'${oldName.replace(/'/g,"\\'")}')" class="text-green-400 hover:text-green-300"><i class="fas fa-check"></i></button>
+            <input type="text" id="rename-input-${idx}" value="${oldName}" class="admin-input flex-1">
+            <button onclick="saveRename(${idx},'${oldName.replace(/'/g,"\\'")}')" class="text-green-400 hover:text-green-300"><i class="fas fa-check"></i></button>
             <button onclick="renderAdminContent()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
         </div>`;
-        document.getElementById('rename-input-' + pk + '-' + idx).focus();
+        document.getElementById('rename-input-' + idx).focus();
     }
 
-    function saveRename(pk, idx, oldName) {
-        const input = document.getElementById('rename-input-' + pk + '-' + idx);
+    function saveRename(idx, oldName) {
+        const input = document.getElementById('rename-input-' + idx);
         const newName = input.value.trim();
         if (!newName) { showToast('Team name cannot be empty', 'error'); return; }
-        tournamentData.pools[pk].teams[idx] = newName;
+        tournamentData.teams[idx] = newName;
         for (const m of tournamentData.matches) {
             if (m.teamA === oldName) m.teamA = newName;
             if (m.teamB === oldName) m.teamB = newName;
+            if (m.winner === oldName) m.winner = newName;
         }
-        if (tournamentData.adjustments[oldName]) {
-            tournamentData.adjustments[newName] = tournamentData.adjustments[oldName];
-            delete tournamentData.adjustments[oldName];
+        if (tournamentData.logos[oldName]) {
+            tournamentData.logos[newName] = tournamentData.logos[oldName];
+            delete tournamentData.logos[oldName];
         }
         saveData(); renderAll(); renderAdminContent();
         showToast('Team renamed to "' + newName + '"');
     }
 
-    function deleteTeam(pk, idx) {
-        const name = tournamentData.pools[pk].teams[idx];
-        showConfirm('Delete Team', 'Remove "' + name + '" and all their fixtures from ' + tournamentData.pools[pk].name + '?', () => {
-            tournamentData.matches = tournamentData.matches.filter(m => m.teamA !== name && m.teamB !== name);
-            tournamentData.pools[pk].teams.splice(idx, 1);
-            delete tournamentData.adjustments[name];
+    function deleteTeam(idx) {
+        const name = tournamentData.teams[idx];
+        showConfirm('Delete Team', 'Remove "' + name + '" and clear them from any bracket slot?', () => {
+            for (const m of tournamentData.matches) {
+                if (m.teamA === name) m.teamA = null;
+                if (m.teamB === name) m.teamB = null;
+                if (m.winner === name) m.winner = null;
+            }
+            tournamentData.teams.splice(idx, 1);
+            delete tournamentData.logos[name];
             saveData(); renderAll(); renderAdminContent();
             showToast('Team deleted');
         });
     }
 
-    function addTeam(pk) {
-        const pool = tournamentData.pools[pk];
-        const newName = 'New Team ' + pk + (pool.teams.length + 1);
-        pool.teams.push(newName);
+    function addTeam() {
+        const newName = 'New Team ' + (tournamentData.teams.length + 1);
+        tournamentData.teams.push(newName);
         saveData(); renderAll(); renderAdminContent();
-        showToast('Team added. Add fixtures in the Fixtures tab.');
+        showToast('Team added. Assign them to a slot in Bracket Setup.');
     }
 
-    let adminFixtureFilter = 'all';
+    function renderAdminBracketSetup() {
+        let html = '<p class="text-gray-400 text-sm mb-4">Assign teams to Knockout Stage slots manually. Later rounds fill in automatically as results come in — only their match time can be edited here.</p>';
 
-    function renderAdminFixtures() {
-        const filterPk = adminFixtureFilter;
-        const matches = filterPk === 'all' ? tournamentData.matches : tournamentData.matches.filter(m => m.pool === filterPk);
-        let filterHtml = '<div class="flex gap-2 mb-4 overflow-x-auto pb-2">';
-        filterHtml += `<button onclick="adminFixtureFilter='all';renderAdminContent()" class="admin-btn ${filterPk === 'all' ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">All</button>`;
-        for (const pk of ['A','B','C','D']) {
-            filterHtml += `<button onclick="adminFixtureFilter='${pk}';renderAdminContent()" class="admin-btn ${filterPk === pk ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">Pool ${pk}</button>`;
-        }
-        filterHtml += '</div>';
-
-        let addFormHtml = `<div class="bg-gray-900 rounded-lg border border-gray-700 p-4 mb-4">
-            <h4 class="font-semibold text-white mb-3"><i class="fas fa-plus-circle mr-2 text-scfc-accent"></i>Add Fixture</h4>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <select id="add-fixture-pool" class="admin-select" onchange="updateAddFixtureTeams()">
-                    <option value="A">Pool A</option><option value="B">Pool B</option><option value="C">Pool C</option><option value="D">Pool D</option>
-                </select>
-                <select id="add-fixture-teama" class="admin-select"></select>
-                <select id="add-fixture-teamb" class="admin-select"></select>
-                <input type="text" id="add-fixture-time" class="admin-input" placeholder="e.g. 10:00 AM">
-            </div>
-            <button onclick="addFixture()" class="admin-btn admin-btn-green w-full mt-3">Add Fixture</button>
-        </div>`;
-
-        let listHtml = '<div class="space-y-3">';
-        matches.forEach(m => {
-            const c = POOL_COLORS[m.pool];
-            const statusClass = m.status === 'live' ? 'status-live' : m.status === 'completed' ? 'status-completed' : 'status-upcoming';
-            listHtml += `<div class="bg-gray-900 rounded-lg border ${c.border} p-4">
-                <div class="flex items-center justify-between flex-wrap gap-2">
-                    <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">Pool ${m.pool}</span>
-                    <span class="text-xs text-gray-400">#${m.id}</span>
-                    <span class="${statusClass} px-2 py-1 rounded-full text-xs font-bold">${m.status === 'completed' ? 'FT' : m.status === 'live' ? 'LIVE' : 'Upcoming'}</span>
-                </div>
-                <div class="mt-2 text-sm font-semibold text-white">${m.teamA} vs ${m.teamB}</div>
-                <div class="text-xs text-gray-400 mt-1"><i class="fas fa-clock mr-1"></i>${m.time}</div>
-                <div class="flex gap-2 mt-2">
-                    <button onclick="deleteFixture(${m.id})" class="admin-btn admin-btn-red text-xs py-1 px-3"><i class="fas fa-trash mr-1"></i>Delete</button>
+        const r16 = sortByRound(tournamentData.matches.filter(m => m.round === 0));
+        const r16c = ROUND_META[0];
+        html += `<div class="mb-6"><h3 class="text-lg font-bold mb-3 ${r16c.text}"><i class="fas fa-layer-group mr-2"></i>${r16c.name}</h3>
+            <div class="space-y-3">`;
+        r16.forEach(m => {
+            html += `<div class="bg-gray-900 rounded-lg border ${r16c.border} p-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <select id="slot-team-${m.id}-a" class="admin-select">${tournamentData.teams.map(t => `<option value="${t}" ${t === m.teamA ? 'selected' : ''}>${t}</option>`).join('')}</select>
+                    <select id="slot-team-${m.id}-b" class="admin-select">${tournamentData.teams.map(t => `<option value="${t}" ${t === m.teamB ? 'selected' : ''}>${t}</option>`).join('')}</select>
+                    <input type="text" id="slot-time-${m.id}" class="admin-input" placeholder="e.g. 10:00 AM" value="${m.time || ''}">
                 </div>
             </div>`;
         });
-        listHtml += '</div>';
-        return filterHtml + addFormHtml + listHtml;
+        html += '</div></div>';
+
+        for (let r = 1; r < ROUND_SIZES.length; r++) {
+            const c = ROUND_META[r];
+            const matches = sortByRound(tournamentData.matches.filter(m => m.round === r));
+            html += `<div class="mb-6"><h3 class="text-lg font-bold mb-3 ${c.text}"><i class="fas fa-layer-group mr-2"></i>${c.name}</h3>
+                <div class="space-y-3">`;
+            matches.forEach(m => {
+                html += `<div class="bg-gray-900 rounded-lg border ${c.border} p-4">
+                    <div class="text-sm font-semibold text-white mb-2">${m.teamA || 'TBD'} vs ${m.teamB || 'TBD'}</div>
+                    <input type="text" id="slot-time-${m.id}" class="admin-input w-full" placeholder="e.g. 4:00 PM" value="${m.time || ''}">
+                </div>`;
+            });
+            html += '</div></div>';
+        }
+        html += `<button onclick="saveBracketSetup()" class="admin-btn admin-btn-green w-full mt-3"><i class="fas fa-save mr-1"></i>Save Bracket &amp; Times</button>`;
+        return html;
     }
 
-    function updateAddFixtureTeams() {
-        const pk = document.getElementById('add-fixture-pool').value;
-        const teams = tournamentData.pools[pk].teams;
-        const selA = document.getElementById('add-fixture-teama');
-        const selB = document.getElementById('add-fixture-teamb');
-        selA.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
-        selB.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
-        if (teams.length > 1) selB.selectedIndex = 1;
-    }
+    function saveBracketSetup() {
+        const r16 = sortByRound(tournamentData.matches.filter(m => m.round === 0));
+        const newA = r16.map(m => document.getElementById('slot-team-' + m.id + '-a').value);
+        const newB = r16.map(m => document.getElementById('slot-team-' + m.id + '-b').value);
+        const all = newA.concat(newB);
+        const dupes = all.filter((t, i) => all.indexOf(t) !== i);
+        if (dupes.length > 0) { showToast('Each team can only be assigned to one slot (duplicate: ' + dupes[0] + ')', 'error'); return; }
 
-    function addFixture() {
-        const pk = document.getElementById('add-fixture-pool').value;
-        const teamA = document.getElementById('add-fixture-teama').value;
-        const teamB = document.getElementById('add-fixture-teamb').value;
-        const time = document.getElementById('add-fixture-time').value.trim();
-        if (!time) { showToast('Please enter a match time', 'error'); return; }
-        if (teamA === teamB) { showToast('Teams must be different', 'error'); return; }
-        const newId = tournamentData.matches.length > 0 ? Math.max(...tournamentData.matches.map(m => m.id)) + 1 : 1;
-        tournamentData.matches.push({ id: newId, pool: pk, teamA, teamB, scoreA: null, scoreB: null, status: 'upcoming', time });
-        saveData(); renderAll(); renderAdminContent();
-        showToast('Fixture added');
-    }
+        const assignmentsChanged = r16.some((m, i) => m.teamA !== newA[i] || m.teamB !== newB[i]);
 
-    function deleteFixture(id) {
-        showConfirm('Delete Fixture', 'Remove this fixture permanently?', () => {
-            tournamentData.matches = tournamentData.matches.filter(m => m.id !== id);
+        const applyTimes = () => {
+            for (const m of tournamentData.matches) {
+                const timeInput = document.getElementById('slot-time-' + m.id);
+                if (timeInput) m.time = timeInput.value.trim();
+            }
+        };
+        const finish = () => {
+            applyTimes();
             saveData(); renderAll(); renderAdminContent();
-            showToast('Fixture deleted');
-        });
+            showToast('Bracket saved');
+        };
+        const applyAssignmentsAndFinish = () => {
+            r16.forEach((m, i) => { m.teamA = newA[i]; m.teamB = newB[i]; });
+            for (const m of tournamentData.matches) {
+                if (m.round > 0) { m.teamA = null; m.teamB = null; m.scoreA = null; m.scoreB = null; m.winner = null; m.status = 'upcoming'; }
+            }
+            finish();
+        };
+
+        if (!assignmentsChanged) { finish(); return; }
+        const downstreamHasResults = tournamentData.matches.some(m => m.round > 0 && (m.status === 'completed' || m.teamA || m.teamB));
+        if (downstreamHasResults) {
+            showConfirm('Overwrite Bracket', 'Changing Knockout Stage assignments will clear all later-round results. Continue?', applyAssignmentsAndFinish);
+        } else {
+            applyAssignmentsAndFinish();
+        }
     }
 
     let adminResultFilter = 'all';
 
+    function parseScorers(value) {
+        return value.split(',').map(s => s.trim()).filter(Boolean);
+    }
+
     function renderAdminResults() {
-        const filterPk = adminResultFilter;
-        const matches = filterPk === 'all' ? tournamentData.matches : tournamentData.matches.filter(m => m.pool === filterPk);
+        const filterRound = adminResultFilter;
+        const matches = sortByRound(tournamentData.matches.filter(m => m.teamA && m.teamB && (filterRound === 'all' || m.round === filterRound)));
         let filterHtml = '<div class="flex gap-2 mb-4 overflow-x-auto pb-2">';
-        filterHtml += `<button onclick="adminResultFilter='all';renderAdminContent()" class="admin-btn ${filterPk === 'all' ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">All</button>`;
-        for (const pk of ['A','B','C','D']) {
-            filterHtml += `<button onclick="adminResultFilter='${pk}';renderAdminContent()" class="admin-btn ${filterPk === pk ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">Pool ${pk}</button>`;
-        }
+        filterHtml += `<button onclick="adminResultFilter='all';renderAdminContent()" class="admin-btn ${filterRound === 'all' ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">All</button>`;
+        ROUND_META.forEach((rm, i) => {
+            filterHtml += `<button onclick="adminResultFilter=${i};renderAdminContent()" class="admin-btn ${filterRound === i ? 'admin-btn-green' : 'admin-btn-gray'} text-xs">${rm.name}</button>`;
+        });
         filterHtml += '</div>';
 
         let html = '<div class="space-y-3">';
         matches.forEach(m => {
-            const c = POOL_COLORS[m.pool];
+            const c = ROUND_META[m.round];
             const sA = m.scoreA !== null ? m.scoreA : 0;
             const sB = m.scoreB !== null ? m.scoreB : 0;
+            const tied = sA === sB;
             html += `<div class="bg-gray-900 rounded-lg border ${c.border} p-4">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">Pool ${m.pool}</span>
-                    <span class="text-xs text-gray-400">#${m.id} &middot; ${m.time}</span>
+                    <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">${c.name}</span>
+                    <span class="text-xs text-gray-400">#${m.id}${m.time ? ' &middot; ' + m.time : ''}</span>
                 </div>
                 <div class="flex items-center justify-center gap-3 mb-3">
                     <span class="font-semibold text-white text-sm">${m.teamA}</span>
@@ -757,6 +803,16 @@
                     <span class="text-gray-400 font-bold">-</span>
                     <input type="number" min="0" value="${sB}" id="score-b-${m.id}" class="admin-input w-16 text-center text-lg font-bold">
                     <span class="font-semibold text-white text-sm">${m.teamB}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <input type="text" id="scorers-a-${m.id}" class="admin-input text-xs" placeholder="${m.teamA} scorers" value="${(m.scorersA || []).join(', ')}">
+                    <input type="text" id="scorers-b-${m.id}" class="admin-input text-xs" placeholder="${m.teamB} scorers" value="${(m.scorersB || []).join(', ')}">
+                </div>
+                <div id="tiebreak-${m.id}" class="${tied ? '' : 'hidden'} flex items-center justify-center gap-2 mb-3 text-xs">
+                    <span class="text-gray-400">Tied — penalty shootout score:</span>
+                    <input type="number" min="0" id="pen-a-${m.id}" value="${m.penA ?? ''}" placeholder="${m.teamA}" class="admin-input w-16 text-center">
+                    <span class="text-gray-400 font-bold">-</span>
+                    <input type="number" min="0" id="pen-b-${m.id}" value="${m.penB ?? ''}" placeholder="${m.teamB}" class="admin-input w-16 text-center">
                 </div>
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <div class="flex gap-2">
@@ -777,80 +833,45 @@
         if (!match) return;
         match.scoreA = parseInt(document.getElementById('score-a-' + id).value) || 0;
         match.scoreB = parseInt(document.getElementById('score-b-' + id).value) || 0;
+        match.scorersA = parseScorers(document.getElementById('scorers-a-' + id).value);
+        match.scorersB = parseScorers(document.getElementById('scorers-b-' + id).value);
         saveData(); renderAll();
-        showToast('Match result saved');
+        showToast('Score saved');
     }
 
     function setMatchStatus(id, status) {
         const match = tournamentData.matches.find(m => m.id === id);
         if (!match) return;
-        match.status = status;
+        const scoreA = parseInt(document.getElementById('score-a-' + id).value) || 0;
+        const scoreB = parseInt(document.getElementById('score-b-' + id).value) || 0;
+        match.scorersA = parseScorers(document.getElementById('scorers-a-' + id).value);
+        match.scorersB = parseScorers(document.getElementById('scorers-b-' + id).value);
         if (status === 'completed') {
-            match.scoreA = parseInt(document.getElementById('score-a-' + id).value) || 0;
-            match.scoreB = parseInt(document.getElementById('score-b-' + id).value) || 0;
+            let winner = scoreA > scoreB ? match.teamA : scoreB > scoreA ? match.teamB : null;
+            let penA = null, penB = null;
+            if (!winner) {
+                penA = parseInt(document.getElementById('pen-a-' + id).value);
+                penB = parseInt(document.getElementById('pen-b-' + id).value);
+                if (isNaN(penA) || isNaN(penB) || penA === penB) {
+                    showToast('Scores are tied — enter a valid penalty shootout score before marking Full Time', 'error');
+                    renderAdminContent();
+                    return;
+                }
+                winner = penA > penB ? match.teamA : match.teamB;
+            }
+            match.winner = winner;
+            match.penA = penA; match.penB = penB;
+            match.scoreA = scoreA; match.scoreB = scoreB; match.status = status;
+            advanceWinner(match);
+        } else {
+            const previousWinner = match.winner;
+            match.winner = null;
+            match.penA = null; match.penB = null;
+            match.scoreA = scoreA; match.scoreB = scoreB; match.status = status;
+            retractWinner(match, previousWinner);
         }
         saveData(); renderAll(); renderAdminContent();
         showToast('Status updated to ' + (status === 'completed' ? 'Full Time' : status.charAt(0).toUpperCase() + status.slice(1)));
-    }
-
-    function renderAdminStandings() {
-        let html = '<p class="text-gray-400 text-sm mb-4">Standings are auto-calculated from match results. Use adjustments below for point deductions or bonuses (e.g., forfeit penalties).</p>';
-        for (const pk of ['A','B','C','D']) {
-            const c = POOL_COLORS[pk];
-            const standings = calculateStandings(pk);
-            html += `<div class="mb-6">
-                <h3 class="text-lg font-bold mb-3 ${c.text}"><i class="fas fa-layer-group mr-2"></i>${tournamentData.pools[pk].name}</h3>
-                <div class="overflow-x-auto"><table class="w-full text-sm">
-                    <thead class="bg-gray-800"><tr>
-                        <th class="px-3 py-2 text-left text-gray-400">#</th>
-                        <th class="px-3 py-2 text-left text-gray-400">Team</th>
-                        <th class="px-3 py-2 text-center text-gray-400">P</th>
-                        <th class="px-3 py-2 text-center text-gray-400">W</th>
-                        <th class="px-3 py-2 text-center text-gray-400">D</th>
-                        <th class="px-3 py-2 text-center text-gray-400">L</th>
-                        <th class="px-3 py-2 text-center text-gray-400">GD</th>
-                        <th class="px-3 py-2 text-center text-gray-400">Pts</th>
-                        <th class="px-3 py-2 text-center text-gray-400">Adj</th>
-                        <th class="px-3 py-2 text-left text-gray-400">Note</th>
-                    </tr></thead><tbody>`;
-            standings.forEach((s, i) => {
-                html += `<tr class="border-b border-gray-800 ${i === 0 ? c.bg : ''}">
-                    <td class="px-3 py-2 text-white">${i + 1}</td>
-                    <td class="px-3 py-2 font-semibold text-white">${s.name}</td>
-                    <td class="px-3 py-2 text-center text-gray-300">${s.played}</td>
-                    <td class="px-3 py-2 text-center text-gray-300">${s.won}</td>
-                    <td class="px-3 py-2 text-center text-gray-300">${s.drawn}</td>
-                    <td class="px-3 py-2 text-center text-gray-300">${s.lost}</td>
-                    <td class="px-3 py-2 text-center text-gray-300">${s.gd > 0 ? '+' + s.gd : s.gd}</td>
-                    <td class="px-3 py-2 text-center font-bold ${c.text}">${s.pts}</td>
-                    <td class="px-3 py-2"><input type="number" value="${s.adj}" id="adj-${pk}-${i}" class="admin-input w-14 text-center text-xs py-1 px-1"></td>
-                    <td class="px-3 py-2"><input type="text" value="${s.note}" id="note-${pk}-${i}" class="admin-input text-xs py-1 px-2 w-24" placeholder="-"></td>
-                </tr>`;
-            });
-            html += '</tbody></table></div></div>';
-        }
-        html += '<button onclick="saveAdjustments()" class="admin-btn admin-btn-green w-full mt-2"><i class="fas fa-save mr-2"></i>Save Adjustments</button>';
-        return html;
-    }
-
-    function saveAdjustments() {
-        tournamentData.adjustments = {};
-        for (const pk of ['A','B','C','D']) {
-            const standings = calculateStandings(pk);
-            standings.forEach((s, i) => {
-                const adjEl = document.getElementById('adj-' + pk + '-' + i);
-                const noteEl = document.getElementById('note-' + pk + '-' + i);
-                if (adjEl && noteEl) {
-                    const adj = parseInt(adjEl.value) || 0;
-                    const note = noteEl.value.trim();
-                    if (adj !== 0 || note) {
-                        tournamentData.adjustments[s.name] = { pointsAdj: adj, note };
-                    }
-                }
-            });
-        }
-        saveData(); renderAll(); renderAdminContent();
-        showToast('Adjustments saved');
     }
 
     // ===== IMGBB UPLOAD =====
@@ -879,15 +900,15 @@
         reader.readAsDataURL(file);
     }
 
-    function uploadTeamLogo(pk, idx) {
-        document.getElementById('logo-input-' + pk + '-' + idx).click();
+    function uploadTeamLogo(idx) {
+        document.getElementById('logo-input-' + idx).click();
     }
 
-    function handleTeamLogoUpload(pk, idx, input) {
+    function handleTeamLogoUpload(idx, input) {
         const file = input.files[0];
         if (!file) return;
         uploadToImgBB(file, function(url) {
-            const teamName = tournamentData.pools[pk].teams[idx];
+            const teamName = tournamentData.teams[idx];
             tournamentData.logos[teamName] = url;
             saveData(); renderAll(); renderAdminContent();
         });
@@ -970,9 +991,8 @@
         html += `<div class="bg-gray-900 rounded-lg border border-gray-700 p-6">
             <h4 class="font-semibold text-white mb-4"><i class="fas fa-info-circle mr-2 text-blue-400"></i>Data Summary</h4>
             <div class="space-y-2 text-sm">
-                <p class="text-gray-400">Pools: <span class="text-white font-semibold">${Object.keys(tournamentData.pools).length}</span></p>
-                <p class="text-gray-400">Total Teams: <span class="text-white font-semibold">${Object.values(tournamentData.pools).reduce((a, p) => a + p.teams.length, 0)}</span></p>
-                <p class="text-gray-400">Total Fixtures: <span class="text-white font-semibold">${tournamentData.matches.length}</span></p>
+                <p class="text-gray-400">Total Teams: <span class="text-white font-semibold">${tournamentData.teams.length}</span></p>
+                <p class="text-gray-400">Total Matches: <span class="text-white font-semibold">${tournamentData.matches.length}</span></p>
                 <p class="text-gray-400">Completed: <span class="text-white font-semibold">${tournamentData.matches.filter(m => m.status === 'completed').length}</span></p>
                 <p class="text-gray-400">Gallery Images: <span class="text-white font-semibold">${(tournamentData.images?.gallery || []).length}</span></p>
                 <p class="text-gray-400">Team Logos: <span class="text-white font-semibold">${Object.keys(tournamentData.logos || {}).length}</span></p>
@@ -1010,7 +1030,6 @@
 
     function confirmReset() {
         showConfirm('Reset All Data', 'This will delete all changes and restore default data. Continue?', () => {
-            localStorage.removeItem('scfc_tournament');
             tournamentData = generateDefaultData();
             saveData(); renderAll(); renderAdminContent();
             showToast('Data reset to defaults');
@@ -1037,7 +1056,6 @@
             document.getElementById('admin-panel').classList.remove('hidden');
             document.getElementById('admin-panel').style.display = '';
             switchAdminTab('teams');
-            updateAddFixtureTeams();
         } else {
             document.getElementById('admin-error').classList.remove('hidden');
         }
@@ -1074,6 +1092,7 @@
         document.querySelectorAll('[id^="tab-"]').forEach(el => { el.classList.remove('tab-active'); el.classList.add('tab-inactive'); });
         document.getElementById('tab-' + tabName).classList.remove('tab-inactive');
         document.getElementById('tab-' + tabName).classList.add('tab-active');
+        if (tabName === 'bracket') drawBracketLines();
     }
 
     // ===== SCROLL REVEAL =====
@@ -1085,12 +1104,17 @@
     }
 
     // ===== INIT =====
-    tournamentData = loadData();
-    renderAll();
-    observeReveals();
+    async function init() {
+        await initSupabase();
+        await loadData();
+        renderAll();
+        observeReveals();
+        subscribeToChanges();
 
-    // Hash-based admin access
-    if (window.location.hash === '#admin') { openAdminModal(); }
+        // Hash-based admin access
+        if (window.location.hash === '#admin') { openAdminModal(); }
+    }
+    init();
     </script>
 </body>
 </html>
