@@ -508,7 +508,7 @@
 
     function renderBracket() {
         let html = '<h2 class="text-2xl font-bold text-white mb-6 neon-text">Tournament Knockout</h2>';
-        html += '<div class="bracket-wrap"><svg class="bracket-lines"></svg><div class="bracket" id="bracket-rounds">';
+        html += '<div class="bracket-wrap"><div class="bracket" id="bracket-rounds"><svg class="bracket-lines"></svg>';
         for (let r = 0; r < ROUND_SIZES.length; r++) {
             const c = ROUND_META[r];
             const matches = sortByRound(tournamentData.matches.filter(m => m.round === r));
@@ -554,6 +554,8 @@
     }
 
     window.addEventListener('resize', () => drawBracketLines());
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', () => drawBracketLines());
+    new ResizeObserver(() => drawBracketLines()).observe(document.getElementById('content-bracket'));
 
     function renderResults() {
         const completed = sortByRound(tournamentData.matches.filter(m => m.status === 'completed'));
