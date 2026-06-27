@@ -416,6 +416,14 @@
         return match.indexInRound % 2 === 0;
     }
 
+    // If this match's winner advances into a slot whose other side is
+    // already known (e.g. a team with a bye, pre-placed there), surface that.
+    function getKnownNextOpponent(match) {
+        const next = getNextMatch(match);
+        if (!next) return null;
+        return isTeamASlot(match) ? next.teamB : next.teamA;
+    }
+
     function advanceWinner(match) {
         const next = getNextMatch(match);
         if (!next || !match.winner) return;
@@ -477,6 +485,8 @@
             html += '<div class="space-y-3">';
             for (const m of upcoming) {
                 const c = ROUND_META[m.round];
+                const knownNext = getKnownNextOpponent(m);
+                const nextOpponentNote = knownNext ? `<p class="text-center text-xs text-gray-500 mt-2">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>` : '';
                 html += `<div class="bg-scfc-dark rounded-xl p-4 border ${c.border}">
                     <div class="flex items-center justify-between">
                         <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">${m.time || c.name}</span>
@@ -486,6 +496,7 @@
                             <span class="font-semibold text-white">${m.teamB}</span>
                         </div>
                     </div>
+                    ${nextOpponentNote}
                 </div>`;
             }
             html += '</div>';
@@ -508,6 +519,8 @@
             const statusBadge = m.status === 'live'
                 ? '<span class="status-live px-2 py-1 rounded-full text-xs font-bold">LIVE</span>'
                 : '';
+            const knownNext = getKnownNextOpponent(m);
+            const nextOpponentNote = knownNext ? `<p class="text-center text-xs text-gray-500 mt-3">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>` : '';
             html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} card-hover neon-border reveal">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="text-center md:text-left">
@@ -520,6 +533,7 @@
                         <div class="text-left"><p class="font-bold text-white">${m.teamB}</p><span class="text-xs text-gray-400">${c.name}</span></div>
                     </div>
                 </div>
+                ${nextOpponentNote}
             </div>`;
         }
         html += '</div>';
