@@ -570,6 +570,7 @@
         svg.setAttribute('height', bracket.scrollHeight);
         let paths = '';
         for (const m of tournamentData.matches) {
+            if (m.noAutoAdvance) continue;
             const next = getNextMatch(m);
             if (!next) continue;
             const fromEl = bracket.querySelector('[data-match-id="' + m.id + '"]');
