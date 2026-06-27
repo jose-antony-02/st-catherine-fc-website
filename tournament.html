@@ -486,7 +486,9 @@
             for (const m of upcoming) {
                 const c = ROUND_META[m.round];
                 const knownNext = getKnownNextOpponent(m);
-                const nextOpponentNote = knownNext ? `<p class="text-center text-xs text-gray-500 mt-2">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>` : '';
+                const nextOpponentNote = knownNext
+                    ? `<p class="text-center text-xs text-gray-500 mt-2">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>`
+                    : (m.noAutoAdvance ? '<p class="text-center text-xs text-yellow-500 italic mt-2">Winner\'s next match will be decided after Round 1</p>' : '');
                 html += `<div class="bg-scfc-dark rounded-xl p-4 border ${c.border}">
                     <div class="flex items-center justify-between">
                         <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">${m.time || c.name}</span>
@@ -520,7 +522,9 @@
                 ? '<span class="status-live px-2 py-1 rounded-full text-xs font-bold">LIVE</span>'
                 : '';
             const knownNext = getKnownNextOpponent(m);
-            const nextOpponentNote = knownNext ? `<p class="text-center text-xs text-gray-500 mt-3">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>` : '';
+            const nextOpponentNote = knownNext
+                ? `<p class="text-center text-xs text-gray-500 mt-3">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>`
+                : (m.noAutoAdvance ? '<p class="text-center text-xs text-yellow-500 italic mt-3">Winner\'s next match will be decided after Round 1</p>' : '');
             html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} card-hover neon-border reveal">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="text-center md:text-left">
@@ -552,7 +556,8 @@
                 const penBText = m.penB !== null ? ` <span class="text-gray-500">(${m.penB})</span>` : '';
                 const teamARow = `<div class="bracket-team ${m.winner === m.teamA ? 'winner' : ''} ${!m.teamA ? 'tbd' : ''}"><span>${m.teamA || 'TBD'}</span>${m.status === 'completed' ? `<span>${m.scoreA}${penAText}</span>` : ''}</div>`;
                 const teamBRow = `<div class="bracket-team ${m.winner === m.teamB ? 'winner' : ''} ${!m.teamB ? 'tbd' : ''}"><span>${m.teamB || 'TBD'}</span>${m.status === 'completed' ? `<span>${m.scoreB}${penBText}</span>` : ''}</div>`;
-                html += `<div class="bracket-match-slot" data-match-id="${m.id}"><div class="bracket-match ${c.border}">${teamARow}${teamBRow}</div></div>`;
+                const placementNote = m.noAutoAdvance ? '<div class="text-[10px] text-yellow-500 text-center italic mt-1">Next match: to be decided</div>' : '';
+                html += `<div class="bracket-match-slot" data-match-id="${m.id}"><div class="bracket-match ${c.border}">${teamARow}${teamBRow}${placementNote}</div></div>`;
             }
             html += '</div></div>';
         }
