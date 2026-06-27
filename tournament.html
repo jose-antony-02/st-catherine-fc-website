@@ -315,8 +315,9 @@
             "Kalatharang Karumkulam"
         ];
         // Round 1 (indexInRound -> pair of teams). 17 teams means one bye:
-        // SEC Marthandanthurai sits out Round 1 and is pre-placed into the
-        // Quarterfinal slot fed by index 4/5, waiting for that match's winner.
+        // SEC Marthandanthurai sits out Round 1 entirely and instead plays an
+        // extra "playoff" match against the Turf45/Swapna winner (added below),
+        // which counts as Pool B's 3rd Quarterfinal branch alongside the other 3.
         const round1Pairs = {
             0: ["St. Catherine Yellow", "PSA Poonthura"],
             1: ["St. James's Vaniyakudi", "Jai Christ Adimalathura"],
@@ -334,18 +335,28 @@
                 const pair = r === 0 ? round1Pairs[i] : null;
                 matches.push({
                     id: id++, round: r, indexInRound: i,
-                    teamA: pair ? pair[0] : (r === 1 && i === 2 ? "SEC Marthandanthurai" : null),
+                    teamA: pair ? pair[0] : null,
                     teamB: pair ? pair[1] : null,
                     scoreA: null, scoreB: null, winner: null,
                     scorersA: [], scorersB: [], penA: null, penB: null,
-                    status: 'upcoming', time: '',
-                    // Blue vs Kalatharang's winner would normally auto-advance into
-                    // this same Quarterfinal slot, but SEC already occupies it (bye) —
-                    // the admin places that winner manually via Bracket Setup instead.
-                    noAutoAdvance: r === 0 && i === 4
+                    status: 'upcoming', time: ''
                 });
             }
         }
+        // Playoff: Turf 45 Trichy/Swapna Kochuthurai's winner vs SEC Marthandanthurai,
+        // feeding into the same Quarterfinal slot (id 11) as the Blue/Kalatharang match.
+        const turf45VsSwapna = matches.find(m => m.round === 0 && m.indexInRound === 5);
+        const quarterfinalSlot = matches.find(m => m.round === 1 && m.indexInRound === 2);
+        turf45VsSwapna.nextMatchId = id;
+        turf45VsSwapna.nextMatchSlot = 'teamA';
+        matches.push({
+            id: id++, round: 0, indexInRound: 8, isPlayoff: true,
+            teamA: null, teamB: "SEC Marthandanthurai",
+            scoreA: null, scoreB: null, winner: null,
+            scorersA: [], scorersB: [], penA: null, penB: null,
+            status: 'upcoming', time: '',
+            nextMatchId: quarterfinalSlot.id, nextMatchSlot: 'teamB'
+        });
         return { version: DATA_VERSION, teams, matches, logos: {}, images: { gallery: [] }, settings: { imgbbApiKey: '' } };
     }
 
@@ -407,12 +418,18 @@
         return tournamentData.matches.find(m => m.round === round && m.indexInRound === indexInRound);
     }
 
+    // Most matches advance via the standard round-halving grid, but a match
+    // can instead explicitly point to where its winner goes (nextMatchId +
+    // nextMatchSlot) — needed for irregular brackets, e.g. a bye/playoff
+    // branch that doesn't fit the simple "every round exactly halves" shape.
     function getNextMatch(match) {
+        if (match.nextMatchId != null) return tournamentData.matches.find(m => m.id === match.nextMatchId);
         if (match.round >= ROUND_SIZES.length - 1) return null;
         return getMatch(match.round + 1, Math.floor(match.indexInRound / 2));
     }
 
     function isTeamASlot(match) {
+        if (match.nextMatchSlot) return match.nextMatchSlot === 'teamA';
         return match.indexInRound % 2 === 0;
     }
 
@@ -486,9 +503,7 @@
             for (const m of upcoming) {
                 const c = ROUND_META[m.round];
                 const knownNext = getKnownNextOpponent(m);
-                const nextOpponentNote = knownNext
-                    ? `<p class="text-center text-xs text-gray-500 mt-2">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>`
-                    : (m.noAutoAdvance ? '<p class="text-center text-xs text-yellow-500 italic mt-2">Winner\'s next match will be decided after Round 1</p>' : '');
+                const nextOpponentNote = knownNext ? `<p class="text-center text-xs text-gray-500 mt-2">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>` : '';
                 html += `<div class="bg-scfc-dark rounded-xl p-4 border ${c.border}">
                     <div class="flex items-center justify-between">
                         <span class="${c.badge} px-2 py-1 rounded-full text-xs font-semibold border">${m.time || c.name}</span>
@@ -522,9 +537,7 @@
                 ? '<span class="status-live px-2 py-1 rounded-full text-xs font-bold">LIVE</span>'
                 : '';
             const knownNext = getKnownNextOpponent(m);
-            const nextOpponentNote = knownNext
-                ? `<p class="text-center text-xs text-gray-500 mt-3">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>`
-                : (m.noAutoAdvance ? '<p class="text-center text-xs text-yellow-500 italic mt-3">Winner\'s next match will be decided after Round 1</p>' : '');
+            const nextOpponentNote = knownNext ? `<p class="text-center text-xs text-gray-500 mt-3">Winner faces <span class="text-gray-300 font-semibold">${knownNext}</span> next</p>` : '';
             html += `<div class="bg-scfc-dark rounded-xl p-6 border ${c.border} card-hover neon-border reveal">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="text-center md:text-left">
@@ -556,8 +569,7 @@
                 const penBText = m.penB !== null ? ` <span class="text-gray-500">(${m.penB})</span>` : '';
                 const teamARow = `<div class="bracket-team ${m.winner === m.teamA ? 'winner' : ''} ${!m.teamA ? 'tbd' : ''}"><span>${m.teamA || 'TBD'}</span>${m.status === 'completed' ? `<span>${m.scoreA}${penAText}</span>` : ''}</div>`;
                 const teamBRow = `<div class="bracket-team ${m.winner === m.teamB ? 'winner' : ''} ${!m.teamB ? 'tbd' : ''}"><span>${m.teamB || 'TBD'}</span>${m.status === 'completed' ? `<span>${m.scoreB}${penBText}</span>` : ''}</div>`;
-                const placementNote = m.noAutoAdvance ? '<div class="text-[10px] text-yellow-500 text-center italic mt-1">Next match: to be decided</div>' : '';
-                html += `<div class="bracket-match-slot" data-match-id="${m.id}"><div class="bracket-match ${c.border}">${teamARow}${teamBRow}${placementNote}</div></div>`;
+                html += `<div class="bracket-match-slot" data-match-id="${m.id}"><div class="bracket-match ${c.border}">${teamARow}${teamBRow}</div></div>`;
             }
             html += '</div></div>';
         }
@@ -575,7 +587,6 @@
         svg.setAttribute('height', bracket.scrollHeight);
         let paths = '';
         for (const m of tournamentData.matches) {
-            if (m.noAutoAdvance) continue;
             const next = getNextMatch(m);
             if (!next) continue;
             const fromEl = bracket.querySelector('[data-match-id="' + m.id + '"]');
@@ -748,7 +759,7 @@
     function renderAdminBracketSetup() {
         let html = '<p class="text-gray-400 text-sm mb-4">Assign teams to any round\'s slots manually. Round 1 must be fully assigned (no duplicates); later rounds also fill in automatically as results come in, but can be manually set or corrected here too (e.g. for a bye).</p>';
 
-        const r16 = sortByRound(tournamentData.matches.filter(m => m.round === 0));
+        const r16 = sortByRound(tournamentData.matches.filter(m => m.round === 0 && !m.isPlayoff));
         const r16c = ROUND_META[0];
         html += `<div class="mb-6"><h3 class="text-lg font-bold mb-3 ${r16c.text}"><i class="fas fa-layer-group mr-2"></i>${r16c.name}</h3>
             <div class="space-y-3">`;
@@ -762,6 +773,23 @@
             </div>`;
         });
         html += '</div></div>';
+
+        const playoffs = sortByRound(tournamentData.matches.filter(m => m.isPlayoff));
+        if (playoffs.length > 0) {
+            html += `<div class="mb-6"><h3 class="text-lg font-bold mb-3 text-orange-400"><i class="fas fa-random mr-2"></i>Playoff (Bye) Matches</h3>
+                <p class="text-gray-400 text-xs mb-3">Extra matches outside the normal grid, for byes — e.g. a team that sits out Round 1 and plays the winner of another match directly.</p>
+                <div class="space-y-3">`;
+            playoffs.forEach(m => {
+                html += `<div class="bg-gray-900 rounded-lg border border-orange-500/30 p-4">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <select id="slot-team-${m.id}-a" class="admin-select">${teamSlotOptions(m.teamA)}</select>
+                        <select id="slot-team-${m.id}-b" class="admin-select">${teamSlotOptions(m.teamB)}</select>
+                        <input type="text" id="slot-time-${m.id}" class="admin-input" placeholder="e.g. 4:00 PM" value="${m.time || ''}">
+                    </div>
+                </div>`;
+            });
+            html += '</div></div>';
+        }
 
         for (let r = 1; r < ROUND_SIZES.length; r++) {
             const c = ROUND_META[r];
@@ -784,14 +812,14 @@
     }
 
     function saveBracketSetup() {
-        const r16 = sortByRound(tournamentData.matches.filter(m => m.round === 0));
+        const r16 = sortByRound(tournamentData.matches.filter(m => m.round === 0 && !m.isPlayoff));
         const newA = r16.map(m => document.getElementById('slot-team-' + m.id + '-a').value);
         const newB = r16.map(m => document.getElementById('slot-team-' + m.id + '-b').value);
         const all = newA.concat(newB);
         const dupes = all.filter((t, i) => all.indexOf(t) !== i);
         if (dupes.length > 0) { showToast('Each team can only be assigned to one slot (duplicate: ' + dupes[0] + ')', 'error'); return; }
 
-        const laterRounds = sortByRound(tournamentData.matches.filter(m => m.round > 0));
+        const laterRounds = sortByRound(tournamentData.matches.filter(m => m.round > 0 || m.isPlayoff));
         const laterAssignments = laterRounds.map(m => ({
             match: m,
             teamA: document.getElementById('slot-team-' + m.id + '-a').value || null,
@@ -818,13 +846,13 @@
         const applyAssignmentsAndFinish = () => {
             r16.forEach((m, i) => { m.teamA = newA[i]; m.teamB = newB[i]; });
             for (const m of tournamentData.matches) {
-                if (m.round > 0) { m.teamA = null; m.teamB = null; m.scoreA = null; m.scoreB = null; m.winner = null; m.status = 'upcoming'; }
+                if (m.round > 0 || m.isPlayoff) { m.teamA = null; m.teamB = null; m.scoreA = null; m.scoreB = null; m.winner = null; m.status = 'upcoming'; }
             }
             finish();
         };
 
         if (!assignmentsChanged) { finish(); return; }
-        const downstreamHasResults = tournamentData.matches.some(m => m.round > 0 && (m.status === 'completed' || m.teamA || m.teamB));
+        const downstreamHasResults = tournamentData.matches.some(m => (m.round > 0 || m.isPlayoff) && (m.status === 'completed' || m.teamA || m.teamB));
         if (downstreamHasResults) {
             showConfirm('Overwrite Bracket', 'Changing Knockout Stage assignments will clear all later-round results. Continue?', applyAssignmentsAndFinish);
         } else {
@@ -924,7 +952,7 @@
             match.winner = winner;
             match.penA = penA; match.penB = penB;
             match.scoreA = scoreA; match.scoreB = scoreB; match.status = status;
-            if (!match.noAutoAdvance) advanceWinner(match);
+            advanceWinner(match);
         } else {
             const previousWinner = match.winner;
             match.winner = null;
