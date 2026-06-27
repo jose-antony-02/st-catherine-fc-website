@@ -311,18 +311,38 @@
             "St. Catherine Red", "St. Catherine Blue", "St. Catherine Yellow", "St. James's Vaniyakudi",
             "St. Lucia Erayumanthurai", "SEC Marthandanthurai", "St. Nicholas Neerodi", "Udaya Paruthiyoor",
             "SBFA Poovar", "Swapna Kochuthurai", "Kalasagar Pulluvila", "Jai Christ Adimalathura",
-            "St. Mary's Vizhinjam", "PSA Poonthura", "Kawin Turf Nagercoil", "Turf 45 Trichy"
+            "St. Mary's Vizhinjam", "PSA Poonthura", "Kawin Turf Nagercoil", "Turf 45 Trichy",
+            "Kalatharang Karumkulam"
         ];
+        // Round 1 (indexInRound -> pair of teams). 17 teams means one bye:
+        // SEC Marthandanthurai sits out Round 1 and is pre-placed into the
+        // Quarterfinal slot fed by index 4/5, waiting for that match's winner.
+        const round1Pairs = {
+            0: ["St. Catherine Yellow", "PSA Poonthura"],
+            1: ["St. James's Vaniyakudi", "Jai Christ Adimalathura"],
+            2: ["St. Catherine Red", "St. Mary's Vizhinjam"],
+            3: ["Kalasagar Pulluvila", "Kawin Turf Nagercoil"],
+            4: ["St. Catherine Blue", "Kalatharang Karumkulam"],
+            5: ["Turf 45 Trichy", "Swapna Kochuthurai"],
+            6: ["St. Lucia Erayumanthurai", "St. Nicholas Neerodi"],
+            7: ["Udaya Paruthiyoor", "SBFA Poovar"]
+        };
         const matches = [];
         let id = 1;
         for (let r = 0; r < ROUND_SIZES.length; r++) {
             for (let i = 0; i < ROUND_SIZES[r]; i++) {
+                const pair = r === 0 ? round1Pairs[i] : null;
                 matches.push({
                     id: id++, round: r, indexInRound: i,
-                    teamA: null, teamB: null,
+                    teamA: pair ? pair[0] : (r === 1 && i === 2 ? "SEC Marthandanthurai" : null),
+                    teamB: pair ? pair[1] : null,
                     scoreA: null, scoreB: null, winner: null,
                     scorersA: [], scorersB: [], penA: null, penB: null,
-                    status: 'upcoming', time: ''
+                    status: 'upcoming', time: '',
+                    // Blue vs Kalatharang's winner would normally auto-advance into
+                    // this same Quarterfinal slot, but SEC already occupies it (bye) —
+                    // the admin places that winner manually via Bracket Setup instead.
+                    noAutoAdvance: r === 0 && i === 4
                 });
             }
         }
@@ -699,8 +719,14 @@
         showToast('Team added. Assign them to a slot in Bracket Setup.');
     }
 
+    function teamSlotOptions(selected) {
+        let opts = `<option value="" ${!selected ? 'selected' : ''}>— TBD —</option>`;
+        opts += tournamentData.teams.map(t => `<option value="${t}" ${t === selected ? 'selected' : ''}>${t}</option>`).join('');
+        return opts;
+    }
+
     function renderAdminBracketSetup() {
-        let html = '<p class="text-gray-400 text-sm mb-4">Assign teams to Knockout Stage slots manually. Later rounds fill in automatically as results come in — only their match time can be edited here.</p>';
+        let html = '<p class="text-gray-400 text-sm mb-4">Assign teams to any round\'s slots manually. Round 1 must be fully assigned (no duplicates); later rounds also fill in automatically as results come in, but can be manually set or corrected here too (e.g. for a bye).</p>';
 
         const r16 = sortByRound(tournamentData.matches.filter(m => m.round === 0));
         const r16c = ROUND_META[0];
@@ -724,8 +750,11 @@
                 <div class="space-y-3">`;
             matches.forEach(m => {
                 html += `<div class="bg-gray-900 rounded-lg border ${c.border} p-4">
-                    <div class="text-sm font-semibold text-white mb-2">${m.teamA || 'TBD'} vs ${m.teamB || 'TBD'}</div>
-                    <input type="text" id="slot-time-${m.id}" class="admin-input w-full" placeholder="e.g. 4:00 PM" value="${m.time || ''}">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <select id="slot-team-${m.id}-a" class="admin-select">${teamSlotOptions(m.teamA)}</select>
+                        <select id="slot-team-${m.id}-b" class="admin-select">${teamSlotOptions(m.teamB)}</select>
+                        <input type="text" id="slot-time-${m.id}" class="admin-input" placeholder="e.g. 4:00 PM" value="${m.time || ''}">
+                    </div>
                 </div>`;
             });
             html += '</div></div>';
@@ -742,6 +771,13 @@
         const dupes = all.filter((t, i) => all.indexOf(t) !== i);
         if (dupes.length > 0) { showToast('Each team can only be assigned to one slot (duplicate: ' + dupes[0] + ')', 'error'); return; }
 
+        const laterRounds = sortByRound(tournamentData.matches.filter(m => m.round > 0));
+        const laterAssignments = laterRounds.map(m => ({
+            match: m,
+            teamA: document.getElementById('slot-team-' + m.id + '-a').value || null,
+            teamB: document.getElementById('slot-team-' + m.id + '-b').value || null
+        }));
+
         const assignmentsChanged = r16.some((m, i) => m.teamA !== newA[i] || m.teamB !== newB[i]);
 
         const applyTimes = () => {
@@ -750,8 +786,12 @@
                 if (timeInput) m.time = timeInput.value.trim();
             }
         };
+        const applyLaterRounds = () => {
+            laterAssignments.forEach(({ match, teamA, teamB }) => { match.teamA = teamA; match.teamB = teamB; });
+        };
         const finish = () => {
             applyTimes();
+            applyLaterRounds();
             saveData(); renderAll(); renderAdminContent();
             showToast('Bracket saved');
         };
@@ -864,7 +904,7 @@
             match.winner = winner;
             match.penA = penA; match.penB = penB;
             match.scoreA = scoreA; match.scoreB = scoreB; match.status = status;
-            advanceWinner(match);
+            if (!match.noAutoAdvance) advanceWinner(match);
         } else {
             const previousWinner = match.winner;
             match.winner = null;
